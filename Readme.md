@@ -1,7 +1,7 @@
 # Личный проект «Readme»
 
 * Студент: [Константин Кандрук](https://up.htmlacademy.ru/php/12/user/1168091).
-* Наставник: [Руслан Мехамеджанов](https://htmlacademy.ru/profile/id82754).
+* Наставник: [Руслан Мухамеджанов](https://htmlacademy.ru/profile/id82754).
 
 ---
 
