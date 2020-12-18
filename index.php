@@ -14,7 +14,11 @@ $posts = [
     [
         'title' => 'Игра престолов',
         'type' => 'post-text',
-        'content' => 'Не могу дождаться начала финального сезона своего любимого сериала!',
+        'content' => 'Озеро Байкал – огромное древнее озеро в горах Сибири к северу от монгольской границы. Байкал
+                        считается самым глубоким озером в мире. Он окружен сетью пешеходных маршрутов, называемых
+                        Большой байкальской тропой. Деревня Листвянка, расположенная на западном берегу озера, –
+                        популярная отправная точка для летних экскурсий. Зимой здесь можно кататься на коньках и
+                        собачьих упряжках.',
         'user_name' => 'Владик',
         'avatar' => 'userpic.jpg'
     ],
@@ -40,6 +44,32 @@ $posts = [
         'avatar' => 'userpic.jpg'
     ]
 ];
+
+function cropText ($text, $textLimit = 300)
+{
+    if (mb_strlen($text) <= $textLimit) {
+        return $text;
+    }
+
+    $words = explode(' ', $text);
+    $temp = array();
+    $currentLengthText = 0;
+
+    for ($i = 0; $i < count($words); $i++) {
+
+        $currentLengthText += mb_strlen($words[$i]);
+
+        if ($currentLengthText <= $textLimit) {
+            $temp[] = $words[$i];
+        } else {
+            break;
+        }
+
+        $currentLengthText++;
+    }
+
+    return implode(' ', $temp) . '...';
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -252,13 +282,20 @@ $posts = [
 
                 <?php
                     switch ($post['type']) :
-                        case 'post-text': ?>
+                        case 'post-text':
+                            $result = cropText($post['content']); ?>
 
-                    <p><?=$post['content'] ?></p>       
+                    <p><?=$result; ?></p>
+
+                    <?php if($post['content'] !== $result): ?>
+                        <div class="post-text__more-link-wrapper">
+                            <a class="post-text__more-link" href="#">Читать далее</a>
+                        </div>
+                    <?php endif; ?>
 
 
                 <?php            break;
-                        
+
                         case 'post-quote': ?>
 
                     <blockquote>
@@ -284,7 +321,7 @@ $posts = [
                         </a>
                     </div>
                 <?php             break;
-                        
+
                         case 'post-photo': ?>
 
                     <div class="post-photo__image-wrapper">
@@ -348,7 +385,7 @@ $posts = [
                     </div>
                 </footer>
             </article>
-            <?php endforeach; ?>           
+            <?php endforeach; ?>
 
         </div>
     </div>
