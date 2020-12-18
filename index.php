@@ -14,7 +14,12 @@ $posts = [
     [
         'title' => 'Игра престолов',
         'type' => 'post-text',
-        'content' => 'Не могу дождаться начала финального сезона своего любимого сериала!',
+//        'content' => 'Не могу дождаться начала финального сезона своего любимого сериала!',
+        'content' => 'Озеро Байкал – огромное древнее озеро в горах Сибири к северу от монгольской границы. Байкал
+                        считается самым глубоким озером в мире. Он окружен сетью пешеходных маршрутов, называемых
+                        Большой байкальской тропой. Деревня Листвянка, расположенная на западном берегу озера, –
+                        популярная отправная точка для летних экскурсий. Зимой здесь можно кататься на коньках и
+                        собачьих упряжках.',
         'user_name' => 'Владик',
         'avatar' => 'userpic.jpg'
     ],
@@ -41,7 +46,12 @@ $posts = [
     ]
 ];
 
-function cropText (string $text, int $textLimit = 300) {
+function cropText ($text, $textLimit = 300)
+{
+    if (mb_strlen($text) <= $textLimit) {
+        return $text;
+    }
+
     $words = explode(' ', $text);
     $temp = array();
     $currentLengthText = 0;
@@ -50,14 +60,16 @@ function cropText (string $text, int $textLimit = 300) {
 
         $currentLengthText += mb_strlen($words[$i]);
 
-        if ($currentLengthText < $textLimit) {
+        if ($currentLengthText <= $textLimit) {
             $temp[] = $words[$i];
         } else {
-            return implode(' ', $temp) . '...';
+            break;
         }
+
+        $currentLengthText++;
     }
 
-    return implode(' ', $temp);
+    return implode(' ', $temp) . '...';
 }
 ?>
 <!DOCTYPE html>
