@@ -54,7 +54,7 @@ function cropText ($text, $textLimit = 300)
     }
 
     $words = explode(' ', $text);
-    $temp = array();
+    $temp = [];
     $currentLengthText = 0;
 
     for ($i = 0; $i < count($words); $i++) {
@@ -82,6 +82,3 @@ print (include_template('layout.php', [
         'user_name' => $user_name
     ]
 ));
-
-?>
-
