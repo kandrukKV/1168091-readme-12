@@ -85,7 +85,8 @@
     </div>
     <div class="popular__posts">
 
-        <?php foreach ($posts as $post): ?>
+        <?php foreach ($posts as $index => $post): ?>
+            <?php $postDate = generate_random_date($index); ?>
             <article class="popular__post post <?=$post['type'] ?>">
                 <header class="post__header">
                     <h2><?=htmlspecialchars($post['title']) ?></h2>
@@ -159,18 +160,18 @@
                             <?php            break;
                     endswitch;
                     ?>
-                    <!--здесь содержимое карточки-->
                 </div>
                 <footer class="post__footer">
                     <div class="post__author">
                         <a class="post__author-link" href="#" title="Автор">
                             <div class="post__avatar-wrapper">
-                                <!--укажите путь к файлу аватара-->
-                                <img class="post__author-avatar" src="img/<?= htmlspecialchars($post['avatar']) ?>" alt="Аватар пользователя">
+                                <img class="post__author-avatar" src="img/<?=htmlspecialchars($post['avatar']) ?>" alt="Аватар пользователя">
                             </div>
                             <div class="post__info">
-                                <b class="post__author-name"><?= htmlspecialchars($post['user_name']) ?></b>
-                                <time class="post__time" datetime="">дата</time>
+                                <b class="post__author-name"><?=htmlspecialchars($post['user_name']) ?></b>
+                                <time class="post__time" datetime="<?= $postDate ?>" title="<?= date('d.m.Y H:i', strtotime($postDate)) ?>">
+                                <?= getHowMuchTime($postDate) ?>
+                                </time>
                             </div>
                         </a>
                     </div>
