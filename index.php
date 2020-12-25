@@ -1,5 +1,6 @@
 <?php
 include_once ('helpers.php');
+date_default_timezone_set('Europe/Moscow');
 
 $is_auth = rand(0, 1);
 
@@ -71,7 +72,40 @@ function cropText ($text, $textLimit = 300)
     }
 
     return implode(' ', $temp) . '...';
-}
+};
+
+function getHowMuchTime ($time)
+{
+    $diffTime = time() - strtotime($time);
+    $diffMinuts = floor($diffTime / 60);
+
+    if ($diffMinuts < 60) {
+
+        return $diffMinuts . get_noun_plural_form($diffMinuts, ' минута', ' минуты', ' минут') . ' назад';
+    };
+
+    $diffHours = floor($diffMinuts / 60);
+
+    if ($diffHours < 24) {
+        return $diffHours . get_noun_plural_form($diffHours, ' час', ' часа', ' часов') . ' назад';
+    };
+
+    $diffDays = floor($diffHours / 24);
+
+    if ($diffDays < 7) {
+        return $diffDays . get_noun_plural_form($diffDays, ' день', ' дня', ' дней') . ' назад';
+    };
+
+    $diffWeeks = floor($diffDays / 7);
+
+    if ($diffWeeks < 5) {
+        return $diffWeeks . get_noun_plural_form($diffWeeks, ' неделя', ' недели', ' недель') . ' назад';
+    };
+
+    $diffMonts = floor($diffWeeks / 4);
+    
+    return $diffMonts . get_noun_plural_form($diffMonts, ' месяц', ' месяца', ' месяцев') . ' назад';
+};
 
 $content = include_template('main.php', ['posts' => $posts]);
 
