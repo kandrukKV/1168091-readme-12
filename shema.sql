@@ -11,6 +11,9 @@ CREATE TABLE users (
     avatar VARCHAR(128) NOT NULL UNIQUE
 );
 
+CREATE INDEX u_email ON users(email);
+CREATE INDEX u_login ON users(login);
+
 CREATE TABLE content_type (
     id INT AUTO_INCREMENT PRIMARY KEY,
     type_name VARCHAR(128) NOT NULL UNIQUE,
@@ -27,6 +30,8 @@ CREATE TABLE hash_tags (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tag_name VARCHAR(128) NOT NULL UNIQUE
 );
+
+CREATE INDEX h_tag_name ON hash_tags(tag_name);
 
 CREATE TABLE posts (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -60,6 +65,8 @@ CREATE TABLE comments (
     FOREIGN KEY (post_id) REFERENCES posts(id)
 );
 
+CREATE INDEX c_user_id ON comments(user_id);
+
 CREATE TABLE likes (
     user_id INT,
     post_id INT,
@@ -83,3 +90,5 @@ CREATE TABLE messages (
     FOREIGN KEY (sender) REFERENCES users(id),
     FOREIGN KEY (recipient) REFERENCES users(id)
 );
+
+CREATE INDEX m_sender ON messages(sender);
