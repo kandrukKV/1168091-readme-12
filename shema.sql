@@ -38,49 +38,49 @@ CREATE TABLE posts (
     video VARCHAR(256),
     link VARCHAR(256),
     views_count INT UNSIGNED NOT NULL DEFAULT '0',
-    user_id INT UNSIGNED,
-    content_type_id INT UNSIGNED,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (content_type_id) REFERENCES content_type(id)
+    user_id INT UNSIGNED NOT NULL,
+    content_type_id INT UNSIGNED NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (content_type_id) REFERENCES content_type(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 CREATE TABLE posts_hashtags (
-    post_id INT UNSIGNED,
-    hashtag_id INT UNSIGNED,
-    FOREIGN KEY (post_id) REFERENCES posts(id),
-    FOREIGN KEY (hashtag_id) REFERENCES hash_tags(id)
+    post_id INT UNSIGNED NOT NULL,
+    hashtag_id INT UNSIGNED NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (hashtag_id) REFERENCES hash_tags(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE comments (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     datetime DATETIME DEFAULT CURRENT_TIMESTAMP,
     content TEXT NOT NULL,
-    user_id INT UNSIGNED,
-    post_id INT UNSIGNED,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (post_id) REFERENCES posts(id)
+    user_id INT UNSIGNED NOT NULL,
+    post_id INT UNSIGNED NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE likes (
-    user_id INT UNSIGNED,
-    post_id INT UNSIGNED,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (post_id) REFERENCES posts(id)
+    user_id INT UNSIGNED NOT NULL,
+    post_id INT UNSIGNED NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE subscribers (
-    author INT UNSIGNED,
-    subscription INT UNSIGNED,
-    FOREIGN KEY (author) REFERENCES users(id),
-    FOREIGN KEY (subscription) REFERENCES users(id)
+    author INT UNSIGNED NOT NULL,
+    subscription INT UNSIGNED NOT NULL,
+    FOREIGN KEY (author) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (subscription) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE messages (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     datetime DATETIME DEFAULT CURRENT_TIMESTAMP,
     content TEXT NOT NULL,
-    sender INT UNSIGNED,
-    recipient INT UNSIGNED,
-    FOREIGN KEY (sender) REFERENCES users(id),
-    FOREIGN KEY (recipient) REFERENCES users(id)
+    sender INT UNSIGNED NOT NULL,
+    recipient INT UNSIGNED NOT NULL,
+    FOREIGN KEY (sender) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (recipient) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
