@@ -1,11 +1,24 @@
-# получаем список типов контента
-SELECT `type_name` FROM `content_type`;
+# добавляем список типов контента для поста
+INSERT INTO content_type (type_name, class_name) VALUES ('Текст','text');
+INSERT INTO content_type (type_name, class_name) VALUES ('Цитата','quote');
+INSERT INTO content_type (type_name, class_name) VALUES ('Картинка','photo');
+INSERT INTO content_type (type_name, class_name) VALUES ('Видео','video');
+INSERT INTO content_type (type_name, class_name) VALUES ('Ссылка','link');
 
-# добавление пользователя
+# добавление пользователей
 INSERT INTO `users`
-    (`email`, `login`, `pass`, `avatar`) VALUES
-    ('viktor@viktor.ru', 'Виктор', 'pass1', 'userpic-mark.jpg');
+(`email`, `login`, `pass`, `avatar`) VALUES
+('viktor@viktor.ru', 'Виктор', 'pass1', 'userpic-mark.jpg');
 
+INSERT INTO `users`
+(`email`, `login`, `pass`, `avatar`) VALUES
+('larisa@larisa.ru', 'Лариса', 'pass1', 'userpic-larisa-small.jpg');
+
+INSERT INTO `users`
+(`email`, `login`, `pass`, `avatar`) VALUES
+('vladik@vladik.ru', 'Владик', 'pass1', 'userpic.jpg');
+
+# добавление существующий список постов
 # добавление цитаты
 INSERT INTO `posts`
 (`title`, `content`, `quote_author`, `user_id`, `content_type_id`) VALUES
@@ -35,17 +48,40 @@ INSERT INTO `posts`
  1,
  3);
 
-# добавляем комментарий к посту
+INSERT INTO `posts`
+(`title`, `content`, `user_id`, `content_type_id`) VALUES
+('Моя мечта!',
+ 'coast-medium.jpg',
+ 2,
+ 3);
+
+# добавление ссылки
+INSERT INTO `posts`
+(`title`, `content`, `user_id`, `content_type_id`) VALUES
+('Лучшие курсы',
+ 'www.htmlacademy.ru',
+ 3,
+ 5);
+
+# добавление комментариев к разным постам
 INSERT INTO `comments`
 (`content`, `user_id`, `post_id`) VALUES
 ('Классное место! Был там много раз.',
  1,
  2);
 
+INSERT INTO `comments`
+(`content`, `user_id`, `post_id`) VALUES
+('Неплохо получилось!',
+ 2,
+ 2);
+
+
 # получить список постов с сортировкой по популярности и вместе с именами авторов и типом контента
 SELECT p.id, p.datetime, p.title, p.content, u.login, c_t.type_name FROM posts p
 JOIN users u ON p.user_id = u.id
-JOIN content_type c_t ON p.content_type_id = c_t.id;
+JOIN content_type c_t ON p.content_type_id = c_t.id
+ORDER BY views_count DESC;
 
 # получить список постов для конкретного пользователя
 SELECT id, datetime, title, content FROM posts WHERE user_id = 1;
@@ -53,12 +89,12 @@ SELECT id, datetime, title, content FROM posts WHERE user_id = 1;
 # получить список комментариев для одного поста, в комментариях должен быть логин пользователя;
 SELECT c.content, c.datetime, u.login FROM comments c
 JOIN users u ON c.user_id = u.id
-JOIN posts p ON c.post_id = p.id
 WHERE c.post_id = 2;
 
 # добавить лайк к посту
-UPDATE posts SET views_count = views_count + 1
-WHERE id = 1;
+INSERT INTO `likes`
+(`user_id`, `post_id`) VALUES
+(1, 2);
 
 # подписаться на пользователя
 INSERT INTO `subscribers`
