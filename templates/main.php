@@ -40,46 +40,18 @@
                         <span>Все</span>
                     </a>
                 </li>
-                <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--photo button" href="#">
-                        <span class="visually-hidden">Фото</span>
-                        <svg class="filters__icon" width="22" height="18">
-                            <use xlink:href="#icon-filter-photo"></use>
-                        </svg>
-                    </a>
-                </li>
-                <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--video button" href="#">
-                        <span class="visually-hidden">Видео</span>
-                        <svg class="filters__icon" width="24" height="16">
-                            <use xlink:href="#icon-filter-video"></use>
-                        </svg>
-                    </a>
-                </li>
-                <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--text button" href="#">
-                        <span class="visually-hidden">Текст</span>
-                        <svg class="filters__icon" width="20" height="21">
-                            <use xlink:href="#icon-filter-text"></use>
-                        </svg>
-                    </a>
-                </li>
-                <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--quote button" href="#">
-                        <span class="visually-hidden">Цитата</span>
-                        <svg class="filters__icon" width="21" height="20">
-                            <use xlink:href="#icon-filter-quote"></use>
-                        </svg>
-                    </a>
-                </li>
-                <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--link button" href="#">
-                        <span class="visually-hidden">Ссылка</span>
-                        <svg class="filters__icon" width="21" height="18">
-                            <use xlink:href="#icon-filter-link"></use>
-                        </svg>
-                    </a>
-                </li>
+
+                <?php foreach ($content_types as $content_type):?>
+                    <li class="popular__filters-item filters__item">
+                        <a class="filters__button filters__button--<?= $content_type['class_name'] ?> button" href="#">
+                            <span class="visually-hidden"><?= $content_type['type_name'] ?></span>
+                            <svg class="filters__icon" width="22" height="18">
+                                <use xlink:href="#icon-filter-<?= $content_type['class_name'] ?>"></use>
+                            </svg>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+
             </ul>
         </div>
     </div>
@@ -87,15 +59,15 @@
 
         <?php foreach ($posts as $index => $post): ?>
             <?php $postDate = generate_random_date($index); ?>
-            <article class="popular__post post <?=$post['type'] ?>">
+            <article class="popular__post post post-<?=$post['class_name'] ?>">
                 <header class="post__header">
                     <h2><?=htmlspecialchars($post['title']) ?></h2>
                 </header>
                 <div class="post__main">
 
                     <?php
-                    switch ($post['type']) :
-                        case 'post-text':
+                    switch ($post['class_name']) :
+                        case 'text':
                             $result = cropText($post['content']); ?>
 
                             <p><?=htmlspecialchars($result); ?></p>
@@ -109,7 +81,7 @@
 
                             <?php            break;
 
-                        case 'post-quote': ?>
+                        case 'quote': ?>
 
                             <blockquote>
                                 <p><?=htmlspecialchars($post['content']) ?></p>
@@ -118,7 +90,7 @@
 
                             <?php            break;
 
-                        case 'post-link': ?>
+                        case 'link': ?>
 
                             <div class="post-link__wrapper">
                                 <a class="post-link__external" href="http://<?=htmlspecialchars($post['content']) ?>" title="Перейти по ссылке">
@@ -135,14 +107,14 @@
                             </div>
                             <?php             break;
 
-                        case 'post-photo': ?>
+                        case 'photo': ?>
 
                             <div class="post-photo__image-wrapper">
                                 <img src="img/<?=htmlspecialchars($post['content']); ?>" alt="Фото от пользователя" width="360" height="240">
                             </div>
 
                             <?php            break;
-                        case 'post-video': ?>
+                        case 'video': ?>
 
                             <div class="post-video__block">
                                 <div class="post-video__preview">
@@ -168,7 +140,7 @@
                                 <img class="post__author-avatar" src="img/<?=htmlspecialchars($post['avatar']) ?>" alt="Аватар пользователя">
                             </div>
                             <div class="post__info">
-                                <b class="post__author-name"><?=htmlspecialchars($post['user_name']) ?></b>
+                                <b class="post__author-name"><?=htmlspecialchars($post['login']) ?></b>
                                 <time class="post__time" datetime="<?= $postDate ?>" title="<?= date('d.m.Y H:i', strtotime($postDate)) ?>">
                                 <?= getHowMuchTime($postDate) ?>
                                 </time>

@@ -6,47 +6,28 @@ $is_auth = rand(0, 1);
 
 $user_name = 'Mr.Constantine'; // укажите здесь ваше имя
 
-$posts = [
-    [
-        'title' => 'Цитата',
-        'type' => 'post-quote',
-        'content' => 'Мы в жизни любим только раз, а после ищем лишь похожих.',
-        'user_name' => 'Лариса',
-        'avatar' => 'userpic-larisa-small.jpg'
-    ],
-    [
-        'title' => 'Игра престолов',
-        'type' => 'post-text',
-        'content' => 'Озеро Байкал – огромное древнее озеро в горах Сибири к северу от монгольской границы. Байкал
-                        считается самым глубоким озером в мире. Он окружен сетью пешеходных маршрутов, называемых
-                        Большой байкальской тропой. Деревня Листвянка, расположенная на западном берегу озера, –
-                        популярная отправная точка для летних экскурсий. Зимой здесь можно кататься на коньках и
-                        собачьих упряжках.',
-        'user_name' => 'Владик',
-        'avatar' => 'userpic.jpg'
-    ],
-    [
-        'title' => 'Наконец, обработал фотки!',
-        'type' => 'post-photo',
-        'content' => 'rock-medium.jpg',
-        'user_name' => 'Виктор',
-        'avatar' => 'userpic-mark.jpg'
-    ],
-    [
-        'title' => 'Моя мечта',
-        'type' => 'post-photo',
-        'content' => 'coast-medium.jpg',
-        'user_name' => 'Лариса',
-        'avatar' => 'userpic-larisa-small.jpg'
-    ],
-    [
-        'title' => 'Лучшие курсы',
-        'type' => 'post-link',
-        'content' => 'www.htmlacademy.ru',
-        'user_name' => 'Владик',
-        'avatar' => 'userpic.jpg'
-    ]
-];
+$con = mysqli_connect("localhost", "root", "","readme");
+
+mysqli_set_charset($con, "utf8");
+
+if ($con == false) {
+    print("Ошибка подключения: " . mysqli_connect_error());
+}
+else {
+    $sql = "SELECT type_name, class_name FROM content_type";
+    $result = mysqli_query($con, $sql);
+    $content_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    $sql = "SELECT p.id, p.datetime, p.title, p.content, u.login, u.avatar, c_t.type_name, c_t.class_name FROM posts p
+        JOIN users u ON p.user_id = u.id
+        JOIN content_type c_t ON p.content_type_id = c_t.id
+        ORDER BY views_count DESC";
+
+    $result = mysqli_query($con, $sql);
+
+    $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+}
 
 function cropText ($text, $textLimit = 300)
 {
@@ -107,7 +88,10 @@ function getHowMuchTime ($time)
     return $diffMonts . get_noun_plural_form($diffMonts, ' месяц', ' месяца', ' месяцев') . ' назад';
 };
 
-$content = include_template('main.php', ['posts' => $posts]);
+$content = include_template('main.php', [
+    'posts' => $posts,
+    'content_types' => $content_types
+]);
 
 print (include_template('layout.php', [
         'title' => 'readme: популярное',
