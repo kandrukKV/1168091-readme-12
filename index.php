@@ -103,7 +103,7 @@ function getHowMuchTime ($time)
     };
 
     $diffMonts = floor($diffWeeks / 4);
-    
+
     return $diffMonts . get_noun_plural_form($diffMonts, ' месяц', ' месяца', ' месяцев') . ' назад';
 };
 

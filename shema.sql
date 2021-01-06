@@ -17,12 +17,6 @@ CREATE TABLE content_type (
     class_name VARCHAR(128) NOT NULL
 );
 
-INSERT INTO content_type (type_name, class_name) VALUES ('Текст','text');
-INSERT INTO content_type (type_name, class_name) VALUES ('Цитата','quote');
-INSERT INTO content_type (type_name, class_name) VALUES ('Картинка','photo');
-INSERT INTO content_type (type_name, class_name) VALUES ('Видео','video');
-INSERT INTO content_type (type_name, class_name) VALUES ('Ссылка','link');
-
 CREATE TABLE hash_tags (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     tag_name VARCHAR(128) NOT NULL UNIQUE
