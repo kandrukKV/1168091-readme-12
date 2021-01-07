@@ -88,10 +88,14 @@ function getHowMuchTime ($time)
     return $diffMonts . get_noun_plural_form($diffMonts, ' месяц', ' месяца', ' месяцев') . ' назад';
 };
 
-$content = include_template('main.php', [
-    'posts' => $posts,
-    'content_types' => $content_types
-]);
+if (!$posts || !$content_types) {
+    $content = '';
+} else {
+    $content = include_template('main.php', [
+        'posts' => $posts,
+        'content_types' => $content_types
+    ]);
+}
 
 print (include_template('layout.php', [
         'title' => 'readme: популярное',
