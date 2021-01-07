@@ -1,33 +1,4 @@
 <?php
-include_once ('helpers.php');
-date_default_timezone_set('Europe/Moscow');
-
-$is_auth = rand(0, 1);
-
-$user_name = 'Mr.Constantine'; // укажите здесь ваше имя
-
-$con = mysqli_connect("localhost", "root", "","readme");
-
-mysqli_set_charset($con, "utf8");
-
-if ($con == false) {
-    print("Ошибка подключения: " . mysqli_connect_error());
-}
-else {
-    $sql = "SELECT type_name, class_name FROM content_type";
-    $result = mysqli_query($con, $sql);
-    $content_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-    $sql = "SELECT p.id, p.datetime, p.title, p.content, u.login, u.avatar, c_t.type_name, c_t.class_name FROM posts p
-        JOIN users u ON p.user_id = u.id
-        JOIN content_type c_t ON p.content_type_id = c_t.id
-        ORDER BY views_count DESC";
-
-    $result = mysqli_query($con, $sql);
-
-    $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-}
 
 function cropText ($text, $textLimit = 300)
 {
@@ -88,14 +59,43 @@ function getHowMuchTime ($time)
     return $diffMonts . get_noun_plural_form($diffMonts, ' месяц', ' месяца', ' месяцев') . ' назад';
 };
 
-if (!$posts || !$content_types) {
-    $content = '';
-} else {
-    $content = include_template('main.php', [
-        'posts' => $posts,
-        'content_types' => $content_types
-    ]);
+include_once ('helpers.php');
+
+date_default_timezone_set('Europe/Moscow');
+
+$is_auth = rand(0, 1);
+
+$user_name = 'Mr.Constantine'; // укажите здесь ваше имя
+
+$con = mysqli_connect("localhost", "root", "","readme");
+
+if (!$con) {
+    echo "Ошибка подключения к базе данных";
+    http_response_code(500);
+    exit;
 }
+
+mysqli_set_charset($con, "utf8");
+
+$sql = "SELECT type_name, class_name FROM content_type";
+
+$result = mysqli_query($con, $sql);
+
+$content_types = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+
+$sql = "SELECT p.id, p.datetime, p.title, p.content, u.login, u.avatar, c_t.type_name, c_t.class_name FROM posts p
+    JOIN users u ON p.user_id = u.id
+    JOIN content_type c_t ON p.content_type_id = c_t.id
+    ORDER BY views_count DESC";
+
+$result = mysqli_query($con, $sql);
+$posts = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+
+$content = include_template('main.php', [
+    'posts' => $posts,
+    'content_types' => $content_types
+]);
+
 
 print (include_template('layout.php', [
         'title' => 'readme: популярное',

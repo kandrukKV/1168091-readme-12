@@ -57,8 +57,7 @@
     </div>
     <div class="popular__posts">
 
-        <?php foreach ($posts as $index => $post): ?>
-            <?php $postDate = generate_random_date($index); ?>
+        <?php foreach ($posts as $post): ?>
             <article class="popular__post post post-<?=$post['class_name'] ?>">
                 <header class="post__header">
                     <h2><?=htmlspecialchars($post['title']) ?></h2>
@@ -141,8 +140,8 @@
                             </div>
                             <div class="post__info">
                                 <b class="post__author-name"><?=htmlspecialchars($post['login']) ?></b>
-                                <time class="post__time" datetime="<?= $postDate ?>" title="<?= date('d.m.Y H:i', strtotime($postDate)) ?>">
-                                <?= getHowMuchTime($postDate) ?>
+                                <time class="post__time" datetime="<?= $post['datetime'] ?>" title="<?= date('d.m.Y H:i', strtotime($post['datetime'])) ?>">
+                                <?= getHowMuchTime($post['datetime']) ?>
                                 </time>
                             </div>
                         </a>
