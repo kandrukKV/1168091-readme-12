@@ -37,7 +37,7 @@
                 <b class="popular__filters-caption filters__caption">Тип контента:</b>
                 <ul class="popular__filters-list filters__list">
 
-                    <?php $content_type_id = isset($_GET['content_type']) ? $_GET['content_type'] : 'all' ?>
+                    <?php $content_type_id = $_GET['content_type'] ?? 'all' ?>
 
                     <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
                         <a class="filters__button filters__button--ellipse filters__button--all <?=  $content_type_id === 'all' ? 'filters__button--active' : ''?>" href="index.php">

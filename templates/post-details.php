@@ -3,9 +3,14 @@
         <h1 class="page__title page__title--publication"><?= htmlspecialchars($post_details['title']) ?></h1>
         <section class="post-details">
             <h2 class="visually-hidden">Публикация</h2>
-            <div class="post-details__wrapper post-photo">
+            <div class="post-details__wrapper post-<?= $post_details['class_name'] ?>">
                 <div class="post-details__main-block post post--details">
+
+
+
                     <?= $content_inner ?>
+
+
                     <div class="post__indicators">
                         <div class="post__buttons">
                             <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
