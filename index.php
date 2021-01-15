@@ -37,9 +37,9 @@ if (isset($_GET['content_type'])) {
     mysqli_stmt_bind_param($stmt, 'i', $content_type_id);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
-    $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
-    if (!$rows) {
+    if (!$row) {
         echo "Страница не найдена";
         http_response_code(404);
         exit;
