@@ -40,7 +40,7 @@
                 <nav class="header__nav">
                     <ul class="header__my-nav">
                         <li class="header__my-page header__my-page--popular">
-                            <a class="header__page-link header__page-link--active" title="Популярный контент">
+                            <a class="header__page-link header__page-link--active" href="index.php" title="Популярный контент">
                                 <span class="visually-hidden">Популярный контент</span>
                             </a>
                         </li>
@@ -77,25 +77,25 @@
                                     <ul class="header__profile-nav">
                                         <li class="header__profile-nav-item">
                                             <a class="header__profile-nav-link" href="#">
-                          <span class="header__profile-nav-text">
-                            Мой профиль
-                          </span>
+                                              <span class="header__profile-nav-text">
+                                                Мой профиль
+                                              </span>
                                             </a>
                                         </li>
                                         <li class="header__profile-nav-item">
                                             <a class="header__profile-nav-link" href="#">
-                          <span class="header__profile-nav-text">
-                            Сообщения
-                            <i class="header__profile-indicator">2</i>
-                          </span>
+                                              <span class="header__profile-nav-text">
+                                                Сообщения
+                                                <i class="header__profile-indicator">2</i>
+                                              </span>
                                             </a>
                                         </li>
 
                                         <li class="header__profile-nav-item">
                                             <a class="header__profile-nav-link" href="#">
-                          <span class="header__profile-nav-text">
-                            Выход
-                          </span>
+                                              <span class="header__profile-nav-text">
+                                                Выход
+                                              </span>
                                             </a>
                                         </li>
                                     </ul>
@@ -103,7 +103,11 @@
                             </div>
                         </li>
                         <li>
-                            <a class="header__post-button button button--transparent" href="adding-post.html">Пост</a>
+                            <?php if (isset($header_type) && $header_type === 'add_post'): ?>
+                                <a class="header__post-button header__post-button--active button button--transparent" href="#">Закрыть</a>
+                            <?php else: ?>
+                                <a class="header__post-button button button--transparent" href="add.php">Пост</a>
+                            <?php endif; ?>
                         </li>
                     </ul>
                 </nav>
