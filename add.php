@@ -16,7 +16,7 @@ if (!$con) {
 
 mysqli_set_charset($con, "utf8");
 
-$sql = "SELECT type_name, class_name FROM content_type";
+$sql = "SELECT `type_name`, `class_name` FROM `content_type`";
 
 $result = mysqli_query($con, $sql);
 
@@ -24,10 +24,20 @@ $content_types = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 
 $tab_name = $_POST['content_type'] ?? 'photo';
 
-
-
 if (isset($_POST['submit'])) {
-    vardump($_POST);
+    switch ($_POST['content_type']) {
+        case 'photo':
+            vardump($_FILES);
+            break;
+        case 'video':
+            break;
+        case 'text':
+            break;
+        case 'quote':
+            break;
+        case 'link':
+            break;
+    }
 }
 
 $content = include_template('add-post.php', [
