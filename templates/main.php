@@ -71,7 +71,7 @@
                         <?php
                         switch ($post['class_name']) :
                             case 'text':
-                                $result = cropText($post['content']); ?>
+                                $result = crop_text($post['content']); ?>
 
                                 <p><?= htmlspecialchars($result); ?></p>
 
@@ -96,10 +96,10 @@
                             case 'link': ?>
 
                                 <div class="post-link__wrapper">
-                                    <a class="post-link__external" href="http://<?= htmlspecialchars($post['link']) ?>" title="Перейти по ссылке">
+                                    <a class="post-link__external" href="<?= htmlspecialchars($post['content']) ?>" title="Перейти по ссылке">
                                         <div class="post-link__info-wrapper">
                                             <div class="post-link__icon-wrapper">
-                                                <img src="https://www.google.com/s2/favicons?domain=<?= htmlspecialchars($post['link'])?>" alt="Иконка">
+                                                <img src="https://www.google.com/s2/favicons?domain=<?= htmlspecialchars($post['content'])?>" alt="Иконка">
                                             </div>
                                             <div class="post-link__info">
                                                 <h3><?= htmlspecialchars($post['content']); ?></h3>
@@ -113,7 +113,7 @@
                             case 'photo': ?>
 
                                 <div class="post-photo__image-wrapper">
-                                    <img src="img/<?= htmlspecialchars($post['content']); ?>" alt="Фото от пользователя" width="360" height="240">
+                                    <img src="uploads/<?= htmlspecialchars($post['content']); ?>" alt="Фото от пользователя" width="360" height="240">
                                 </div>
 
                                 <?php            break;
@@ -121,10 +121,9 @@
 
                                 <div class="post-video__block">
                                     <div class="post-video__preview">
-                                        <?=embed_youtube_cover(/* вставьте ссылку на видео */); ?>
-                                        <img src="img/coast-medium.jpg" alt="Превью к видео" width="360" height="188">
+                                        <?=embed_youtube_cover(htmlspecialchars($post['content'])); ?>
                                     </div>
-                                    <a href="post-details.html" class="post-video__play-big button">
+                                    <a href="post.php?id=<?=$post['id'] ?>" class="post-video__play-big button">
                                         <svg class="post-video__play-big-icon" width="14" height="14">
                                             <use xlink:href="#icon-video-play-big"></use>
                                         </svg>
@@ -145,7 +144,7 @@
                                 <div class="post__info">
                                     <b class="post__author-name"><?= htmlspecialchars($post['login']) ?></b>
                                     <time class="post__time" datetime="<?= $post['datetime'] ?>" title="<?= date('d.m.Y H:i', strtotime($post['datetime'])) ?>">
-                                    <?= getHowMuchTime($post['datetime']) ?>
+                                    <?= get_how_much_time($post['datetime']) ?>
                                     </time>
                                 </div>
                             </a>
