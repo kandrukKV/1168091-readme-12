@@ -74,15 +74,15 @@ function hash_tags_validation($str)
 {
     $tags = explode(' ', trim($str));
     for ($i = 0; $i < count($tags); $i++) {
-        if (!preg_match("/(^|\B)#(?![0-9_]+\b)([a-zA-Z0-9_]{1,19})(\b|\r)/", $tags[$i])) {
+        if (!preg_match("/^[a-zа-яё]+$/iu", $tags[$i])) {
             return false;
         }
     }
+
     return $tags;
 }
 
-function add_post ($con, $title, $content, $content_type, $user_id)
-{
+function add_post ($con, $title, $content, $author, $content_type, $user_id) {
     $sql = "SELECT `id` FROM `content_type` WHERE `class_name` = '$content_type'";
 
     $res = mysqli_query($con, $sql);
@@ -92,28 +92,53 @@ function add_post ($con, $title, $content, $content_type, $user_id)
         return false;
     }
 
-    vardump($content_type_id);
-    $sql = "INSERT INTO `posts` (`title`, `content`, `user_id`, `content_type_id`) VALUES (?, ?, ?, ?)";
-    $stmt = mysqli_prepare($con, $sql);
-    mysqli_stmt_bind_param($stmt, 'ssii', $title, $content, $user_id, $content_type_id);
-
-    return mysqli_stmt_execute($stmt);
-}
-
-function add_quote_post ($con, $title, $content, $author, $content_type, $user_id) {
-    $sql = "SELECT `id` FROM `content_type` WHERE `class_name` = '$content_type'";
-
-    $res = mysqli_query($con, $sql);
-    $content_type_id = mysqli_fetch_assoc($res)['id'];
-
-    if (!$content_type_id) {
-        return false;
-    }
-
-    vardump($content_type_id);
     $sql = "INSERT INTO `posts` (`title`, `content`, `quote_author`, `user_id`, `content_type_id`) VALUES (?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 'sssii', $title, $content, $author, $user_id, $content_type_id);
 
     return mysqli_stmt_execute($stmt);
+}
+
+function add_tags ($con, $tags, $post_id) {
+
+    $tmp = implode(', ', array_map(function ($item) {
+        return "'" . $item . "'";
+    }, $tags));
+
+    $res = mysqli_query($con, "SELECT `tag_name` FROM `hash_tags` WHERE `tag_name` in ($tmp)");
+
+    $new_tags = [];
+
+    $medium_tags = mysqli_fetch_all($res);
+
+    foreach ($medium_tags as $value) {
+        array_push($new_tags, $value[0]);
+    }
+
+    $array_diff = array_diff($tags, $new_tags);
+
+    if (count($array_diff) > 0) {
+        echo "new tags were";
+        vardump($array_diff);
+        $sql = "INSERT INTO `hash_tags` (`tag_name`) VALUES (?)";
+        $stmt = mysqli_prepare($con, $sql);
+
+        foreach ($array_diff as $item) {
+            mysqli_stmt_bind_param($stmt, 's', $item);
+            mysqli_stmt_execute($stmt);
+        }
+    }
+
+    $sql = "INSERT INTO `posts_hashtags` (`post_id`, `hashtag_id`) VALUES (?, ?)";
+    $stmt = mysqli_prepare($con, $sql);
+
+    foreach ($tags as $tag) {
+        $res = mysqli_query($con, "SELECT `id` FROM `hash_tags` WHERE `tag_name` = '$tag'");
+        $tag_id = mysqli_fetch_assoc($res)['id'];
+
+        if ($tag_id) {
+            mysqli_stmt_bind_param($stmt, 'ii', $post_id, $tag_id);
+            mysqli_stmt_execute($stmt);
+        }
+    }
 }

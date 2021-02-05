@@ -38,12 +38,10 @@
                         <span class="post__view"><?= $post_details['views_count'] . ' ' . get_noun_plural_form($post_details['views_count'], 'просмотр', 'просмотра', 'просмотров')?> </span>
                     </div>
                     <ul class="post__tags">
-                        <li><a href="#">#nature</a></li>
-                        <li><a href="#">#globe</a></li>
-                        <li><a href="#">#photooftheday</a></li>
-                        <li><a href="#">#canon</a></li>
-                        <li><a href="#">#landscape</a></li>
-                        <li><a href="#">#щикарныйвид</a></li>
+
+                        <?php foreach ($tags as $tag): ?>
+                            <li><a href="#">#<?= $tag['tag_name'] ?></a></li>
+                        <?php endforeach; ?>
                     </ul>
                     <div class="comments">
                         <form class="comments__form form" action="#" method="post">

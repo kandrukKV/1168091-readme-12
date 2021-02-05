@@ -26,36 +26,36 @@ $current_tab = $_POST['content_type'] ?? 'photo';
 
 $errors = [];
 
-if (isset($_POST['submit'])) {
+if ($_SERVER['REQUEST_METHOD']=='POST') {
 
-    if (empty($_POST[$current_tab . '-title'])) {
-        $errors[$current_tab . '-title'] = 'Заголовок. Это поле должно быть заполнено.';
+    if (empty($_POST['title'])) {
+        $errors['title'] = 'Заголовок. Это поле должно быть заполнено.';
     }
 
-    if (!empty($_POST[$current_tab . '-tags'])) {
-        $tags = hash_tags_validation($_POST[$current_tab . '-tags']);
+    if (!empty($_POST['tags'])) {
+        $tags = hash_tags_validation($_POST['tags']);
         if (!$tags) {
-            $errors[$current_tab . '-tags'] = 'Хештеги. Неверный формат хештегов';
+            $errors['tags'] = 'Хештеги. Неверный формат хештегов';
         }
     }
 
     if ($current_tab === 'photo' || $current_tab === 'video' || $current_tab === 'link') {
-        if (!empty($_POST[$current_tab . '-content']) && !filter_var($_POST[$current_tab . '-content'], FILTER_VALIDATE_URL)) {
-            $errors[$current_tab . '-content'] = 'Ссылка. Неверный формат ссылки.';
+        if (!empty($_POST['content']) && !filter_var($_POST['content'], FILTER_VALIDATE_URL)) {
+            $errors['content'] = 'Ссылка. Неверный формат ссылки.';
         }
     }
 
     if ($current_tab !== 'photo') {
-        if (empty($_POST[$current_tab . '-content'])) {
-            $errors[$current_tab . '-content'] = 'Контент. Это поле должно быть заполнено.';
+        if (empty($_POST['content'])) {
+            $errors['content'] = 'Контент. Это поле должно быть заполнено.';
         }
     }
 
     switch ($current_tab) {
         case 'photo':
 
-            if ($_FILES['photo-file']['error'] !== 0 && empty($_POST['photo-content'])) {
-                $errors['photo-content'] = 'Контент. Необходимо указать ссылку или прикрепить файл с изображением.';
+            if ($_FILES['photo-file']['error'] !== 0 && empty($_POST['content'])) {
+                $errors['content'] = 'Контент. Необходимо указать ссылку или прикрепить файл с изображением.';
             }
 
             if (isset($_FILES['photo-file']) && $_FILES['photo-file']['error'] === 0) {
@@ -68,94 +68,87 @@ if (isset($_POST['submit'])) {
 
                 if ($file_type !== 'image/gif' && $file_type !== 'image/png' && $file_type !== 'image/jpeg') {
                     $errors['photo-file'] = 'Неверный формат файла';
-                } elseif ($file_size > 2000000) {
-                    $errors['photo-file'] = 'Размер файла превышает 2 Мб';
                 }
             }
             break;
         case 'video':
-            if (!empty($_POST['video-content'])) {
-                $video_error = check_youtube_url($_POST['video-content']);
+            if (!empty($_POST['content'])) {
+                $video_error = check_youtube_url($_POST['content']);
                 if ($video_error !== true) {
-                    $errors['video-content'] = $video_error;
+                    $errors['content'] = $video_error;
                 }
             }
             break;
         case 'quote':
-            if (empty($_POST[$current_tab . '-author'])) {
-                $errors[$current_tab . '-author'] = 'Автор. Это поле должно быть заполнено.';
+            if (empty($_POST['author'])) {
+                $errors['author'] = 'Автор. Это поле должно быть заполнено.';
             }
             break;
     }
 
     if (count($errors) === 0) {
-        echo $current_tab;
-        switch ($current_tab){
-            case 'photo':
-                $file_path = __DIR__ . '/uploads/';
-                $file_is_saved = false;
 
-                if ($_FILES['photo-file']['error'] === 0) {
-                    $file_name = uniqid() . $_FILES['photo-file']['name'];
-                    $file_is_saved = move_uploaded_file($_FILES['photo-file']['tmp_name'], $file_path . $file_name);
+        if ($current_tab === 'photo') {
+            $file_path = __DIR__ . '/uploads/';
+            $file_is_saved = false;
 
-                } elseif (!empty($_POST['photo-content'])) {
-                    $img = file_get_contents($_POST['photo-content']);
-                    $file_name = uniqid();
-                    if ($img) {
-                        $file_info = finfo_open(FILEINFO_MIME_TYPE);
-                        $mime_type = finfo_buffer($file_info, $img);
+            if ($_FILES['photo-file']['error'] === 0) {
+                $file_name = uniqid() . $_FILES['photo-file']['name'];
+                $file_is_saved = move_uploaded_file($_FILES['photo-file']['tmp_name'], $file_path . $file_name);
 
-                        switch ($mime_type) {
-                            case 'image/gif':
-                                $file_name .= '.gif';
-                                break;
-                            case 'image/png':
-                                $file_name .= '.png';
-                                break;
-                            case 'image/jpeg':
-                                $file_name .= '.jpg';
-                                break;
-                            default:
-                                $file_name = '';
-                        }
+            } elseif (!empty($_POST['content'])) {
+                $img = file_get_contents($_POST['content']);
+                $file_name = uniqid();
+                if ($img) {
+                    $file_info = finfo_open(FILEINFO_MIME_TYPE);
+                    $mime_type = finfo_buffer($file_info, $img);
 
-                        if (!$file_name) {
-                            $errors['photo-content'] = 'Неверный формат файла';
-                        } else {
-                            $file_is_saved = file_put_contents($file_path . $file_name, $img);
-                        }
-                    } else {
-                        $errors['photo-content'] = 'Невозможно загрузить файл';
+                    switch ($mime_type) {
+                        case 'image/gif':
+                            $file_name .= '.gif';
+                            break;
+                        case 'image/png':
+                            $file_name .= '.png';
+                            break;
+                        case 'image/jpeg':
+                            $file_name .= '.jpg';
+                            break;
+                        default:
+                            $file_name = '';
                     }
-                }
 
-                if ($file_is_saved) {
-                    $add_result = add_post($con, $_POST['photo-title'], $file_name, $current_tab, 1);
+                    if (!$file_name) {
+                        $errors['content'] = 'Неверный формат файла';
+                    } else {
+                        $file_is_saved = file_put_contents($file_path . $file_name, $img);
+                    }
+                } else {
+                    $errors['content'] = 'Невозможно загрузить файл';
                 }
-                break;
-            case 'video':
-                $add_result = add_post($con, $_POST['video-title'], $_POST['video-content'], $current_tab, 2);
-                break;
-            case 'text':
-                $add_result = add_post($con, $_POST['text-title'], $_POST['text-content'], $current_tab, 3);
-                break;
-            case 'quote':
-                $add_result = add_quote_post($con, $_POST['quote-title'], $_POST['quote-content'], $_POST['quote-author'], $current_tab, 3);
-                break;
-            case 'link':
-                $add_result = add_post($con, $_POST['link-title'], $_POST['link-content'], $current_tab, 3);
-                break;
+            }
 
+            if ($file_is_saved) {
+                $add_result = add_post($con, $_POST['title'], $file_name, null, $current_tab, 3);
+            } else {
+                $errors['content'] = 'Ошибка записи файла';
+            }
+        } else {
+            $add_result = add_post($con, $_POST['title'], $_POST['content'], $_POST['author'] ?? null, $current_tab, 3);
         }
+
+
         if ($add_result) {
-            header('Location:' . 'post.php?id=' . mysqli_insert_id($con));
+            $last_index = mysqli_insert_id($con);
+
+            if (isset($_POST['tags'])) {
+                add_tags($con, $tags, $last_index);
+            }
+
+            header('Location:' . 'post.php?id=' . $last_index);
+            exit();
         }
     }
 }
-
-
-
 
 $content = include_template('add-post.php', [
     'content_types' => $content_types,

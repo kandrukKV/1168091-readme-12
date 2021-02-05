@@ -104,7 +104,7 @@
                         </li>
                         <li>
                             <?php if (isset($header_type) && $header_type === 'add_post'): ?>
-                                <a class="header__post-button header__post-button--active button button--transparent" href="#">Закрыть</a>
+                                <a class="header__post-button header__post-button--active button button--transparent" href="/index.php">Закрыть</a>
                             <?php else: ?>
                                 <a class="header__post-button button button--transparent" href="add.php">Пост</a>
                             <?php endif; ?>

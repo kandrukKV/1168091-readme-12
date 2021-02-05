@@ -51,6 +51,16 @@ $sql = "SELECT * FROM subscribers WHERE author = $user_id";
 $result = mysqli_query($con, $sql);
 $user_num_of_subscribers = mysqli_num_rows($result) ? mysqli_num_rows($result) : '0';
 
+
+//get tags
+
+$sql = "SELECT ht.tag_name FROM posts_hashtags ph JOIN hash_tags ht ON ht.id = ph.hashtag_id WHERE post_id = ?";
+$stmt = mysqli_prepare($con, $sql);
+mysqli_stmt_bind_param($stmt, 'i', $post_id);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
 switch ($post_details['class_name']) {
     case 'text':
         $content_inner = include_template('post-text.php', [
@@ -83,6 +93,7 @@ switch ($post_details['class_name']) {
 
 $content = include_template('post-details.php', [
     'content_inner' => $content_inner,
+    'tags' => $tags,
     'post_details' => $post_details,
     'user_num_of_posts' => $user_num_of_posts,
     'user_num_of_subscribers' => $user_num_of_subscribers
