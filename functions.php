@@ -118,8 +118,6 @@ function add_tags ($con, $tags, $post_id) {
     $array_diff = array_diff($tags, $new_tags);
 
     if (count($array_diff) > 0) {
-        echo "new tags were";
-        vardump($array_diff);
         $sql = "INSERT INTO `hash_tags` (`tag_name`) VALUES (?)";
         $stmt = mysqli_prepare($con, $sql);
 
