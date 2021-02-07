@@ -6,7 +6,7 @@ include_once ('helpers.php');
 
 date_default_timezone_set('Europe/Moscow');
 
-$is_auth = rand(0, 1);
+$is_auth = 1;
 
 $user_name = 'Mr.Constantine'; // укажите здесь ваше имя
 

@@ -6,10 +6,7 @@
             <div class="post-details__wrapper post-<?= $post_details['class_name'] ?>">
                 <div class="post-details__main-block post post--details">
 
-
-
                     <?= $content_inner ?>
-
 
                     <div class="post__indicators">
                         <div class="post__buttons">
@@ -41,12 +38,10 @@
                         <span class="post__view"><?= $post_details['views_count'] . ' ' . get_noun_plural_form($post_details['views_count'], 'просмотр', 'просмотра', 'просмотров')?> </span>
                     </div>
                     <ul class="post__tags">
-                        <li><a href="#">#nature</a></li>
-                        <li><a href="#">#globe</a></li>
-                        <li><a href="#">#photooftheday</a></li>
-                        <li><a href="#">#canon</a></li>
-                        <li><a href="#">#landscape</a></li>
-                        <li><a href="#">#щикарныйвид</a></li>
+
+                        <?php foreach ($tags as $tag): ?>
+                            <li><a href="#">#<?= $tag['tag_name'] ?></a></li>
+                        <?php endforeach; ?>
                     </ul>
                     <div class="comments">
                         <form class="comments__form form" action="#" method="post">
@@ -121,7 +116,7 @@
                             <a class="post-details__name user__name" href="#">
                                 <span><?= htmlspecialchars($post_details['login']) ?></span>
                             </a>
-                            <time class="post-details__time user__time" datetime="2014-03-20"><?= getHowMuchTime($post_details['user_datetime']) ?> на сайте</time>
+                            <time class="post-details__time user__time" datetime="2014-03-20"><?= get_how_much_time($post_details['user_datetime']) ?> на сайте</time>
                         </div>
                     </div>
                     <div class="post-details__rating user__rating">

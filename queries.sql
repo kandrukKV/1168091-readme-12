@@ -1,8 +1,8 @@
 # добавляем список типов контента для поста
+INSERT INTO content_type (type_name, class_name) VALUES ('Фото','photo');
+INSERT INTO content_type (type_name, class_name) VALUES ('Видео','video');
 INSERT INTO content_type (type_name, class_name) VALUES ('Текст','text');
 INSERT INTO content_type (type_name, class_name) VALUES ('Цитата','quote');
-INSERT INTO content_type (type_name, class_name) VALUES ('Картинка','photo');
-INSERT INTO content_type (type_name, class_name) VALUES ('Видео','video');
 INSERT INTO content_type (type_name, class_name) VALUES ('Ссылка','link');
 
 # добавление пользователей
@@ -26,7 +26,7 @@ INSERT INTO `posts`
  'Мы в жизни любим только раз, а после ищем лишь похожих.',
  'Неизвестный Автор',
  2,
- 2);
+ 4);
 
 # добавление текстового поста
 INSERT INTO `posts`
@@ -38,7 +38,7 @@ INSERT INTO `posts`
     популярная отправная точка для летних экскурсий. Зимой здесь можно кататься на коньках и
     собачьих упряжках.',
  3,
- 1);
+ 3);
 
 # добавление фото поста
 INSERT INTO `posts`
@@ -46,14 +46,14 @@ INSERT INTO `posts`
 ('Наконец, обработал фотки!',
  'rock-medium.jpg',
  1,
- 3);
+ 1);
 
 INSERT INTO `posts`
 (`title`, `content`, `user_id`, `content_type_id`) VALUES
 ('Моя мечта!',
  'coast-medium.jpg',
  2,
- 3);
+ 1);
 
 # добавление ссылки
 INSERT INTO `posts`
