@@ -14,15 +14,7 @@ if (!isset($_GET['id'])) {
 
 $post_id = $_GET['id'];
 
-$con = mysqli_connect("localhost", "root", "","readme");
-
-if (!$con) {
-    echo "Ошибка подключения к базе данных";
-    http_response_code(500);
-    exit;
-}
-
-mysqli_set_charset($con, "utf8");
+$con = connect_to_database();
 
 $sql = "SELECT p.datetime, p.title, p.content, p.link, p.views_count, p.user_id, p.quote_author, p.views_count, u.login, u.avatar, u.datetime as user_datetime, c_t.class_name FROM posts p
     JOIN users u ON p.user_id = u.id

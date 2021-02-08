@@ -140,3 +140,27 @@ function add_tags ($con, $tags, $post_id) {
         }
     }
 }
+
+function add_user ($con, $email, $login, $pass, $avatar) {
+
+    $passwordHash = password_hash($pass, PASSWORD_DEFAULT);
+    $sql = "INSERT INTO `users` (`email`, `pass`, `login`, `avatar`) VALUES (?, ?, ?, ?)";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'ssss', $email, $passwordHash, $login, $avatar);
+
+    return mysqli_stmt_execute($stmt);
+}
+
+function connect_to_database () {
+    $con = mysqli_connect("localhost", "root", "","readme");
+
+    if (!$con) {
+        echo "Ошибка подключения к базе данных";
+        http_response_code(500);
+        exit();
+    }
+
+    mysqli_set_charset($con, "utf8");
+
+    return $con;
+}

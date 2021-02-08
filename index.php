@@ -6,19 +6,11 @@ include_once ('helpers.php');
 
 date_default_timezone_set('Europe/Moscow');
 
-$is_auth = 1;
+$is_auth = 0;
 
 $user_name = 'Mr.Constantine'; // укажите здесь ваше имя
 
-$con = mysqli_connect("localhost", "root", "","readme");
-
-if (!$con) {
-    echo "Ошибка подключения к базе данных";
-    http_response_code(500);
-    exit;
-}
-
-mysqli_set_charset($con, "utf8");
+$con = connect_to_database();
 
 $sql = "SELECT id, type_name, class_name FROM content_type";
 
@@ -67,5 +59,6 @@ print (include_template('layout.php', [
         'content' => $content,
         'is_auth' => $is_auth,
         'user_name' => $user_name,
+        'header_type' => 'popular'
     ]
 ));
