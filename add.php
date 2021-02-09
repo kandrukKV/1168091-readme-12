@@ -6,15 +6,7 @@ include_once ('helpers.php');
 $is_auth = 1;
 $user_name = 'Mr.Constantine'; // укажите здесь ваше имя
 
-$con = mysqli_connect("localhost", "root", "","readme");
-
-if (!$con) {
-    echo "Ошибка подключения к базе данных";
-    http_response_code(500);
-    exit;
-}
-
-mysqli_set_charset($con, "utf8");
+$con = connect_to_database();
 
 $sql = "SELECT `type_name`, `class_name` FROM `content_type`";
 
@@ -62,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
 
                 $file_info = finfo_open(FILEINFO_MIME_TYPE);
                 $file_name = $_FILES['photo-file']['tmp_name'];
-                $file_size = $_FILES['photo-file']['size'];
 
                 $file_type = finfo_file($file_info, $file_name);
 
