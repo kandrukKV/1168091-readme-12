@@ -11,8 +11,7 @@ include_once ('functions.php');
 
 $con = connect_to_database();
 
-//$user_id = $_SESSION['user_id'];
-$user_id = 2;
+$user_id = $_SESSION['user_id'];
 
 $current_content_type_id = $_GET['content_type'] ?? 'all';
 
