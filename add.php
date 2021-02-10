@@ -1,5 +1,11 @@
 <?php
 
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header('Location:' . 'index.php');
+    exit();
+}
+
 include_once ('functions.php');
 include_once ('helpers.php');
 

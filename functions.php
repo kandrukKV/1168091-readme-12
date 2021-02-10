@@ -164,3 +164,28 @@ function connect_to_database () {
 
     return $con;
 }
+
+function checkEmail ($con, $email) {
+    $sql = "SELECT `email` FROM `users` WHERE `email` = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    return mysqli_stmt_get_result($stmt);
+}
+
+function get_content_types ($con) {
+    $sql = "SELECT `id`, `type_name`, `class_name` FROM `content_type`";
+
+    $result = mysqli_query($con, $sql);
+
+    return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+}
+
+function content_type_id_is_correct ($con, $content_type_id) {
+    $sql = "SELECT * FROM content_type WHERE id = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $content_type_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_array($result, MYSQLI_ASSOC);
+}

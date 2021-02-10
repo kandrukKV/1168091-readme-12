@@ -1,64 +1,61 @@
 <?php
 
-include_once ('functions.php');
-
-include_once ('helpers.php');
-
-date_default_timezone_set('Europe/Moscow');
-
-$is_auth = 0;
-
-$user_name = 'Mr.Constantine'; // укажите здесь ваше имя
-
-$con = connect_to_database();
-
-$sql = "SELECT id, type_name, class_name FROM content_type";
-
-$result = mysqli_query($con, $sql);
-
-$content_types = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
-
-$posts_sql = "SELECT p.id, p.datetime, p.title, p.content, p.link, p.quote_author, u.login, u.avatar, c_t.type_name, c_t.class_name FROM posts p
-    JOIN users u ON p.user_id = u.id
-    JOIN content_type c_t ON p.content_type_id = c_t.id";
-
-if (isset($_GET['content_type'])) {
-    $content_type_id = $_GET['content_type'];
-    $sql = "SELECT * FROM content_type WHERE id = ?";
-    $stmt = mysqli_prepare($con, $sql);
-    mysqli_stmt_bind_param($stmt, 'i', $content_type_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-
-    if (!$row) {
-        echo "Страница не найдена";
-        http_response_code(404);
-        exit;
-    }
-
-    $posts_sql .= " WHERE content_type_id = ? ORDER BY views_count DESC";
-    $stmt = mysqli_prepare($con, $posts_sql);
-    mysqli_stmt_bind_param($stmt, 'i', $content_type_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-} else {
-    $posts_sql .= " ORDER BY views_count DESC";
-    $result = mysqli_query($con, $posts_sql);
+session_start();
+if (isset($_SESSION['user_id'])) {
+    header('Location:' . 'feed.php');
+    exit();
 }
 
-$posts = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+include_once ('helpers.php');
+include_once ('functions.php');
 
-$content = include_template('main.php', [
-    'posts' => $posts,
-    'content_types' => $content_types
-]);
+$errors = [];
 
-print (include_template('layout.php', [
-        'title' => 'readme: популярное',
-        'content' => $content,
-        'is_auth' => $is_auth,
-        'user_name' => $user_name,
-        'header_type' => 'popular'
-    ]
-));
+if ($_SERVER['REQUEST_METHOD']=='POST') {
+
+    $con = connect_to_database();
+
+    if (empty($_POST['email'])) {
+        $errors['email'] = 'Email. Это поле не должно быть пустым.';
+    } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Email. Неверный формат электронного адреса.';
+    } else {
+        $res = checkEmail($con, $_POST['email']);
+        if (mysqli_num_rows($res) === 0) {
+            $errors['email'] = 'Такой пользователь не зарегистрирован.';
+        }
+    }
+
+    if (empty($_POST['password'])) {
+        $errors['password'] = 'Пароль. Это поле не должно быть пустым.';
+    }
+
+    if (count($errors) === 0) {
+        $sql = "SELECT `id`, `pass`, `login`, `avatar` FROM `users` WHERE `email` = ?";
+        $stmt = mysqli_prepare($con, $sql);
+        mysqli_stmt_bind_param($stmt, 's', $_POST['email']);
+        mysqli_stmt_execute($stmt);
+        $res = mysqli_stmt_get_result($stmt);
+        $user_data = mysqli_fetch_assoc($res);
+        $passwordHash = $user_data['pass'];
+
+        if (password_verify($_POST['password'], $passwordHash)) {
+
+            $_SESSION['user_id'] = $user_data['id'];
+            $_SESSION['login'] = $user_data['login'];
+            $_SESSION['avatar'] = $user_data['avatar'];
+
+            header('Location:' . 'feed.php');
+            exit();
+        }
+        else {
+            $errors['password'] = 'Неправильный пароль.';
+        }
+    }
+}
+
+print (include_template('main.php', [
+    'errors' => $errors
+]));
+
+

@@ -8,7 +8,7 @@ CREATE TABLE users (
     email VARCHAR(128) NOT NULL UNIQUE,
     login VARCHAR(128) NOT NULL UNIQUE,
     pass CHAR(64) NOT NULL,
-    avatar VARCHAR(128) NOT NULL
+    avatar VARCHAR(128)
 );
 
 CREATE TABLE content_type (

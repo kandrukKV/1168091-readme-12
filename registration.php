@@ -39,11 +39,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
     } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Email. Неверный формат электронного адреса.';
     } else {
-         $sql = "SELECT `email` FROM `users` WHERE `email` = ?";
-         $stmt = mysqli_prepare($con, $sql);
-         mysqli_stmt_bind_param($stmt, 's', $_POST['email']);
-         mysqli_stmt_execute($stmt);
-         $res = mysqli_stmt_get_result($stmt);
+         $res = checkEmail($con, $_POST['email']);
 
          if (mysqli_num_rows($res) > 0) {
              $errors['email'] = 'Email. Такой адрес уже был зарегистрирован.';
@@ -89,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
             $file_is_saved = move_uploaded_file($_FILES['userpic-file']['tmp_name'], $file_path . $file_name);
         }
 
-        $add_user = add_user($con, $_POST['email'], $_POST['login'], $_POST['password'], $file_is_saved ? $file_name : '');
+        $add_user = add_user($con, $_POST['email'], $_POST['login'], $_POST['password'], $file_is_saved ? $file_name : null);
 
         if ($add_user) {
             header('Location:' . 'index.php');
