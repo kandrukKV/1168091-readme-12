@@ -1,9 +1,13 @@
 <?php
 
+session_start();
+if (isset($_SESSION['user_id'])) {
+    header('Location:' . 'index.php');
+    exit();
+}
+
 include_once ('helpers.php');
 include_once ('functions.php');
-
-$is_auth = 0;
 
 $form_fields = [
     'email' => [
@@ -39,11 +43,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
     } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Email. Неверный формат электронного адреса.';
     } else {
-         $sql = "SELECT `email` FROM `users` WHERE `email` = ?";
-         $stmt = mysqli_prepare($con, $sql);
-         mysqli_stmt_bind_param($stmt, 's', $_POST['email']);
-         mysqli_stmt_execute($stmt);
-         $res = mysqli_stmt_get_result($stmt);
+         $res = checkEmail($con, $_POST['email']);
 
          if (mysqli_num_rows($res) > 0) {
              $errors['email'] = 'Email. Такой адрес уже был зарегистрирован.';
@@ -89,9 +89,15 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
             $file_is_saved = move_uploaded_file($_FILES['userpic-file']['tmp_name'], $file_path . $file_name);
         }
 
-        $add_user = add_user($con, $_POST['email'], $_POST['login'], $_POST['password'], $file_is_saved ? $file_name : '');
+        $add_user = add_user($con, $_POST['email'], $_POST['login'], $_POST['password'], $file_is_saved ? $file_name : null);
 
         if ($add_user) {
+            $last_index = mysqli_insert_id($con);
+
+            $_SESSION['user_id'] = $last_index;
+            $_SESSION['login'] = $_POST['login'];
+            $_SESSION['avatar'] = $file_is_saved ? $file_name : null;
+
             header('Location:' . 'index.php');
             exit();
         } else {
@@ -109,6 +115,5 @@ $content = include_template('registration.php', [
 print (include_template('layout.php', [
     'title' => 'readme: регистрация',
     'content' => $content,
-    'is_auth' => $is_auth,
     'header_type' => 'registration'
 ]));
