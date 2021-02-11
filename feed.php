@@ -52,7 +52,6 @@ $content = include_template('feed.php', [
 print (include_template('layout.php', [
     'title' => 'readme: моя лента',
     'content' => $content,
-    'is_auth' => 1,
     'user_name' => $_SESSION['login'],
     'header_type' => 'feed',
 ]));

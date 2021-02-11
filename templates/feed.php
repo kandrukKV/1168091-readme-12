@@ -13,7 +13,7 @@
                             <header class="post__header post__author">
                                 <a class="post__author-link" href="#" title="Автор">
                                     <div class="post__avatar-wrapper">
-                                        <img class="post__author-avatar" src="img/<?= htmlspecialchars($post['avatar']) ?>" alt="Аватар пользователя" width="60" height="60">
+                                        <img class="post__author-avatar" src="/uploads/<?= $post['avatar'] ? htmlspecialchars($post['avatar']) : 'unnamed.png'?>" alt="Аватар пользователя" width="60" height="60">
                                     </div>
                                     <div class="post__info">
                                         <b class="post__author-name"><?= htmlspecialchars($post['login']) ?></b>

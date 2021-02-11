@@ -43,7 +43,7 @@
 
                 <nav class="header__nav">
 
-                    <?php if($is_auth === 1): ?>
+                    <?php if($header_type !== 'registration'): ?>
                     <ul class="header__my-nav">
                         <li class="header__my-page header__my-page--popular">
                             <a class="header__page-link<?= $header_type === 'popular' ? ' header__page-link--active' : '' ?>" href="/popular.php" title="Популярный контент">
@@ -66,11 +66,11 @@
                     <!-- здесь должен быть PHP код, который показывает следующий тег по условию -->
                     <ul class="header__user-nav">
 
-                        <?php if($is_auth == 1): ?>
+                        <?php if($header_type !== 'registration'): ?>
                             <li class="header__profile">
                                 <a class="header__profile-link" href="#">
                                     <div class="header__avatar-wrapper">
-                                        <img class="header__profile-avatar" src="/uploads/<?= $_SESSION['avatar']?>" alt="Аватар профиля">
+                                        <img class="header__profile-avatar" src="/uploads/<?= $_SESSION['avatar'] ?? 'unnamed.png'?>" alt="Аватар профиля">
                                     </div>
                                     <div class="header__profile-name">
                                     <span>

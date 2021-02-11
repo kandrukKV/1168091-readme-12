@@ -9,8 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 include_once ('functions.php');
 include_once ('helpers.php');
 
-$is_auth = 1;
-$user_name = 'Mr.Constantine'; // укажите здесь ваше имя
 
 $con = connect_to_database();
 
@@ -125,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
             }
 
             if ($file_is_saved) {
-                $add_result = add_post($con, $_POST['title'], $file_name, null, $current_tab, 3);
+                $add_result = add_post($con, $_POST['title'], $file_name, null, $current_tab, $_SESSION['user_id']);
             } else {
                 $errors['content'] = 'Ошибка записи файла';
             }
@@ -137,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
         if ($add_result) {
             $last_index = mysqli_insert_id($con);
 
-            if (isset($_POST['tags'])) {
+            if (!empty($_POST['tags'])) {
                 add_tags($con, $tags, $last_index);
             }
 
@@ -156,8 +154,7 @@ $content = include_template('add-post.php', [
 print (include_template('layout.php', [
         'title' => 'readme: добавление публикации',
         'content' => $content,
-        'is_auth' => $is_auth,
-        'user_name' => $user_name,
+        'user_name' => $_SESSION['login'],
         'header_type' => 'add_post'
     ]
 ));

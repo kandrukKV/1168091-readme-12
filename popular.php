@@ -48,7 +48,6 @@ $content = include_template('popular.php', [
 print (include_template('layout.php', [
         'title' => 'readme: популярное',
         'content' => $content,
-        'is_auth' => 1,
         'user_name' => $_SESSION['login'],
         'header_type' => 'popular'
     ]

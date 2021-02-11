@@ -4,7 +4,7 @@
     </div>
     <section class="registration container">
         <h2 class="visually-hidden">Форма регистрации</h2>
-        <form class="registration__form form" action="/add-user.php" method="post" enctype="multipart/form-data">
+        <form class="registration__form form" action="/registration.php" method="post" enctype="multipart/form-data">
             <div class="form__text-inputs-wrapper">
                 <div class="form__text-inputs">
                     <?php foreach ($form_fields as $key => $value) : ?>

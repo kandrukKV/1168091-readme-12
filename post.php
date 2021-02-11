@@ -1,10 +1,13 @@
 <?php
+
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header('Location:' . 'index.php');
+    exit();
+}
+
 include_once ('functions.php');
 include_once ('helpers.php');
-
-$is_auth = 1;
-
-$user_name = 'Mr.Constantine'; // укажите здесь ваше имя
 
 if (!isset($_GET['id'])) {
     echo "Страница не найдена";
@@ -94,7 +97,7 @@ $content = include_template('post-details.php', [
 print (include_template('layout.php', [
         'title' => 'readme: публикация',
         'content' => $content,
-        'is_auth' => $is_auth,
-        'user_name' => $user_name
+        'user_name' => $_SESSION['login'],
+        'header_type' => 'post'
     ]
 ));

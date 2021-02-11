@@ -1,9 +1,13 @@
 <?php
 
+session_start();
+if (isset($_SESSION['user_id'])) {
+    header('Location:' . 'index.php');
+    exit();
+}
+
 include_once ('helpers.php');
 include_once ('functions.php');
-
-$is_auth = 0;
 
 $form_fields = [
     'email' => [
@@ -88,6 +92,12 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
         $add_user = add_user($con, $_POST['email'], $_POST['login'], $_POST['password'], $file_is_saved ? $file_name : null);
 
         if ($add_user) {
+            $last_index = mysqli_insert_id($con);
+
+            $_SESSION['user_id'] = $last_index;
+            $_SESSION['login'] = $_POST['login'];
+            $_SESSION['avatar'] = $file_is_saved ? $file_name : null;
+
             header('Location:' . 'index.php');
             exit();
         } else {
@@ -105,6 +115,5 @@ $content = include_template('registration.php', [
 print (include_template('layout.php', [
     'title' => 'readme: регистрация',
     'content' => $content,
-    'is_auth' => $is_auth,
     'header_type' => 'registration'
 ]));
