@@ -41,10 +41,14 @@ $result = mysqli_stmt_get_result($stmt);
 
 $posts = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 
+$all_posts = include_template('posts.php', [
+    'posts' => $posts
+]);
+
 $content_types = get_content_types($con);
 
 $content = include_template('feed.php', [
-    'posts' => $posts,
+    'all_posts' => $all_posts,
     'content_types' => $content_types,
     'current_content_type_id' => $current_content_type_id
 ]);

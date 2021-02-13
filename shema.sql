@@ -78,3 +78,5 @@ CREATE TABLE messages (
     FOREIGN KEY (sender) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (recipient) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE FULLTEXT INDEX post_search ON posts(title, content);

@@ -38,9 +38,8 @@
                         <span class="post__view"><?= $post_details['views_count'] . ' ' . get_noun_plural_form($post_details['views_count'], 'просмотр', 'просмотра', 'просмотров')?> </span>
                     </div>
                     <ul class="post__tags">
-
                         <?php foreach ($tags as $tag): ?>
-                            <li><a href="#">#<?= $tag['tag_name'] ?></a></li>
+                            <li><a href="/search.php?search_request=%23<?= $tag['tag_name'] ?>">#<?= $tag['tag_name'] ?></a></li>
                         <?php endforeach; ?>
                     </ul>
                     <div class="comments">
@@ -109,7 +108,7 @@
                     <div class="post-details__user-info user__info">
                         <div class="post-details__avatar user__avatar">
                             <a class="post-details__avatar-link user__avatar-link" href="#">
-                                <img class="post-details__picture user__picture" src="img/<?= htmlspecialchars($post_details['avatar']) ?>" alt="Аватар пользователя">
+                                <img class="post-details__picture user__picture" src="uploads/<?= htmlspecialchars($post_details['avatar']) ?>" alt="Аватар пользователя">
                             </a>
                         </div>
                         <div class="post-details__name-wrapper user__name-wrapper">

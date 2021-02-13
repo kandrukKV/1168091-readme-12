@@ -24,10 +24,16 @@
         </div>
 
         <?php if (isset($header_type) && $header_type !== 'registration') : ?>
-            <form class="header__search-form form" action="#" method="get">
+            <form class="header__search-form form" action="/search.php" method="get">
                 <div class="header__search">
                     <label class="visually-hidden" for="search">Поиск</label>
-                    <input class="header__search-input form__input" type="search" id="search">
+                    <input
+                        class="header__search-input form__input"
+                        type="search"
+                        id="search"
+                        name="search_request"
+                        value="<?= $_GET['search_request'] ?? '' ?>"
+                    >
                     <button class="header__search-button button" type="submit">
                         <svg class="header__search-icon" width="18" height="18">
                             <use xlink:href="#icon-search"></use>
@@ -113,7 +119,7 @@
                                 </div>
                             </li>
 
-                            <?php if ($header_type === 'popular' || $header_type === 'feed') : ?>
+                            <?php if ($header_type === 'popular' || $header_type === 'feed' || $header_type === 'search') : ?>
                                 <li>
                                     <a class="header__post-button button button--transparent" href="/add.php">Пост</a>
                                 </li>
