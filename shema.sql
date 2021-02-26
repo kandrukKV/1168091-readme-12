@@ -33,8 +33,11 @@ CREATE TABLE posts (
     link VARCHAR(256),
     views_count INT UNSIGNED NOT NULL DEFAULT '0',
     user_id INT UNSIGNED NOT NULL,
+    is_repost BOOLEAN NOT NULL DEFAULT '0',
+    real_author INT UNSIGNED,
     content_type_id INT UNSIGNED NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (real_author) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (content_type_id) REFERENCES content_type(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 

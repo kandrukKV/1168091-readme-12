@@ -15,7 +15,7 @@ $con = connect_to_database();
 
 $content_types = get_content_types($con);
 
-$posts_sql = "SELECT p.id, p.datetime, p.title, p.content, p.link, p.quote_author, u.login, u.avatar, c_t.type_name, c_t.class_name FROM posts p
+$posts_sql = "SELECT p.id, p.datetime, p.title, p.content, p.link, p.quote_author, p.user_id, u.login, u.avatar, c_t.type_name, c_t.class_name FROM posts p
     JOIN users u ON p.user_id = u.id
     JOIN content_type c_t ON p.content_type_id = c_t.id";
 

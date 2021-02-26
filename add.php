@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
                 $errors['content'] = 'Ошибка записи файла';
             }
         } else {
-            $add_result = add_post($con, $_POST['title'], $_POST['content'], $_POST['author'] ?? null, $current_tab, 3);
+            $add_result = add_post($con, $_POST['title'], $_POST['content'], $_POST['author'] ?? null, $current_tab, $_SESSION['user_id']);
         }
 
 
@@ -155,6 +155,7 @@ print (include_template('layout.php', [
         'title' => 'readme: добавление публикации',
         'content' => $content,
         'user_name' => $_SESSION['login'],
+        'user_id' => $_SESSION['user_id'],
         'header_type' => 'add_post'
     ]
 ));

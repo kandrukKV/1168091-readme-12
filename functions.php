@@ -39,30 +39,30 @@ function get_how_much_time($time)
     $diffMinutes = floor($diffTime / 60);
 
     if ($diffMinutes < 60) {
-        return $diffMinutes . get_noun_plural_form($diffMinutes, ' минута', ' минуты', ' минут') . ' назад';
+        return $diffMinutes . get_noun_plural_form($diffMinutes, ' минута', ' минуты', ' минут');
     };
 
     $diffHours = floor($diffMinutes / 60);
 
     if ($diffHours < 24) {
-        return $diffHours . get_noun_plural_form($diffHours, ' час', ' часа', ' часов') . ' назад';
+        return $diffHours . get_noun_plural_form($diffHours, ' час', ' часа', ' часов');
     };
 
     $diffDays = floor($diffHours / 24);
 
     if ($diffDays < 7) {
-        return $diffDays . get_noun_plural_form($diffDays, ' день', ' дня', ' дней') . ' назад';
+        return $diffDays . get_noun_plural_form($diffDays, ' день', ' дня', ' дней');
     };
 
     $diffWeeks = floor($diffDays / 7);
 
     if ($diffWeeks < 5) {
-        return $diffWeeks . get_noun_plural_form($diffWeeks, ' неделя', ' недели', ' недель') . ' назад';
+        return $diffWeeks . get_noun_plural_form($diffWeeks, ' неделя', ' недели', ' недель');
     };
 
     $diffMounts = floor($diffWeeks / 4);
 
-    return $diffMounts . get_noun_plural_form($diffMounts, ' месяц', ' месяца', ' месяцев') . ' назад';
+    return $diffMounts . get_noun_plural_form($diffMounts, ' месяц', ' месяца', ' месяцев');
 }
 
 function get_post_val($name)
@@ -82,7 +82,8 @@ function hash_tags_validation($str)
     return $tags;
 }
 
-function add_post ($con, $title, $content, $author, $content_type, $user_id) {
+function add_post ($con, $title, $content, $author, $content_type, $user_id)
+{
     $sql = "SELECT `id` FROM `content_type` WHERE `class_name` = '$content_type'";
 
     $res = mysqli_query($con, $sql);
@@ -99,7 +100,8 @@ function add_post ($con, $title, $content, $author, $content_type, $user_id) {
     return mysqli_stmt_execute($stmt);
 }
 
-function add_tags ($con, $tags, $post_id) {
+function add_tags ($con, $tags, $post_id)
+{
 
     $tmp = implode(', ', array_map(function ($item) {
         return "'" . $item . "'";
@@ -141,7 +143,8 @@ function add_tags ($con, $tags, $post_id) {
     }
 }
 
-function add_user ($con, $email, $login, $pass, $avatar) {
+function add_user ($con, $email, $login, $pass, $avatar)
+{
 
     $passwordHash = password_hash($pass, PASSWORD_DEFAULT);
     $sql = "INSERT INTO `users` (`email`, `pass`, `login`, `avatar`) VALUES (?, ?, ?, ?)";
@@ -151,7 +154,8 @@ function add_user ($con, $email, $login, $pass, $avatar) {
     return mysqli_stmt_execute($stmt);
 }
 
-function connect_to_database () {
+function connect_to_database ()
+{
     $con = mysqli_connect("localhost", "root", "","readme");
 
     if (!$con) {
@@ -165,7 +169,8 @@ function connect_to_database () {
     return $con;
 }
 
-function checkEmail ($con, $email) {
+function checkEmail ($con, $email)
+{
     $sql = "SELECT `email` FROM `users` WHERE `email` = ?";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 's', $email);
@@ -173,7 +178,8 @@ function checkEmail ($con, $email) {
     return mysqli_stmt_get_result($stmt);
 }
 
-function get_content_types ($con) {
+function get_content_types ($con)
+{
     $sql = "SELECT `id`, `type_name`, `class_name` FROM `content_type`";
 
     $result = mysqli_query($con, $sql);
@@ -181,7 +187,8 @@ function get_content_types ($con) {
     return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 }
 
-function content_type_id_is_correct ($con, $content_type_id) {
+function content_type_id_is_correct ($con, $content_type_id)
+{
     $sql = "SELECT * FROM content_type WHERE id = ?";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 'i', $content_type_id);
@@ -189,3 +196,140 @@ function content_type_id_is_correct ($con, $content_type_id) {
     $result = mysqli_stmt_get_result($stmt);
     return mysqli_fetch_array($result, MYSQLI_ASSOC);
 }
+
+function get_num_posts ($con, $user_id)
+{
+    $sql = "SELECT * FROM posts WHERE user_id = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_num_rows($result);
+}
+
+function get_num_subscribers ($con, $user_id)
+{
+    $sql = "SELECT * FROM subscribers WHERE author = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_num_rows($result);
+}
+
+function get_user_info ($con, $user_id)
+{
+    $sql = "SELECT u.id, u.datetime, u.login, u.email, u.avatar
+        FROM users u
+        WHERE id = ?";
+
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_array($result, MYSQLI_ASSOC);
+}
+
+function get_posts_of_user ($con, $user_id)
+{
+    $posts_sql = "
+        SELECT
+            p.id,
+            p.datetime,
+            p.title,
+            p.content,
+            p.link,
+            p.quote_author,
+            p.user_id,
+            p.is_repost,
+            p.real_author,
+            u_p.login as user_login,
+            u_p.avatar as user_avatar,
+            u_a.login as author_login,
+            u_a.avatar as author_avatar,
+            c_t.type_name,
+            c_t.class_name
+        FROM posts p
+        JOIN users u_p ON p.user_id = u_p.id
+        LEFT JOIN users u_a ON p.real_author = u_a.id
+        JOIN content_type c_t ON p.content_type_id = c_t.id
+        WHERE p.user_id = ?";
+
+    $stmt = mysqli_prepare($con, $posts_sql);
+    mysqli_stmt_bind_param($stmt, 'i', $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+}
+
+function get_post_template ($post)
+{
+    switch ($post['class_name']) {
+        case 'text':
+            $content_inner = include_template('post-text.php', [
+                'content' => $post['content']
+            ]);
+            break;
+        case 'photo':
+            $content_inner = include_template('post-photo.php', [
+                'content' => $post['content']
+            ]);
+            break;
+        case 'quote':
+            $content_inner = include_template('post-quote.php', [
+                'content' => $post['content'],
+                'quote_author' => $post['quote_author']
+            ]);
+            break;
+        case 'link':
+            $content_inner = include_template('post-link.php', [
+                'content' => $post['content'],
+                'link' => $post['link']
+
+            ]);
+            break;
+        case 'video':
+            $content_inner = include_template('post-video.php', [
+                'content' => $post['content']
+            ]);
+            break;
+        default:
+            $content_inner = '';
+    }
+
+    return $content_inner;
+}
+
+function get_tags ($con, $post_id)
+{
+    $sql = "SELECT ht.tag_name FROM posts_hashtags ph JOIN hash_tags ht ON ht.id = ph.hashtag_id WHERE post_id = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $post_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    return $tags ? $tags : [];
+}
+
+function get_comments ($con, $post_id) {
+    $sql = "
+        SELECT
+            c.datetime,
+            c.content,
+            c.user_id,
+            u.login,
+            u.avatar
+        FROM comments c
+        JOIN users u ON u.id = c.user_id
+        WHERE c.post_id = ?
+    ";
+
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $post_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $comments = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    return $comments ? $comments : [];
+}
+

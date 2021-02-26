@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD']=='GET' && isset($_GET['search_request'])) {
                p.content,
                p.link,
                p.quote_author,
+               p.user_id,
                u.login,
                u.avatar,
                c_t.type_name,
@@ -47,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD']=='GET' && isset($_GET['search_request'])) {
             p.content,
             p.link,
             p.quote_author,
+            p.user_id,
             u.login,
             u.avatar,
             c_t.type_name,
@@ -70,7 +72,8 @@ if ($_SERVER['REQUEST_METHOD']=='GET' && isset($_GET['search_request'])) {
 }
 
 $all_posts = include_template('posts.php', [
-    'posts' => $search_results
+    'posts' => $search_results,
+    'post_type' => 'feed'
 ]);
 
 if (count($search_results) > 0) {
@@ -85,5 +88,6 @@ print (include_template('layout.php', [
     'title' => 'readme: страница результатов поиска',
     'content' => $content,
     'user_name' => $_SESSION['login'],
+    'user_id' => $_SESSION['user_id'],
     'header_type' => 'search',
 ]));

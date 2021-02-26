@@ -6,7 +6,7 @@
             <div class="post-details__wrapper post-<?= $post_details['class_name'] ?>">
                 <div class="post-details__main-block post post--details">
 
-                    <?= $content_inner ?>
+                    <?= get_post_template($post_details) ?>
 
                     <div class="post__indicators">
                         <div class="post__buttons">
@@ -37,17 +37,20 @@
                         </div>
                         <span class="post__view"><?= $post_details['views_count'] . ' ' . get_noun_plural_form($post_details['views_count'], 'просмотр', 'просмотра', 'просмотров')?> </span>
                     </div>
+
                     <ul class="post__tags">
                         <?php foreach ($tags as $tag): ?>
                             <li><a href="/search.php?search_request=%23<?= $tag['tag_name'] ?>">#<?= $tag['tag_name'] ?></a></li>
                         <?php endforeach; ?>
                     </ul>
+
                     <div class="comments">
-                        <form class="comments__form form" action="#" method="post">
+
+                        <form class="comments__form form" action="/post.php" method="post">
                             <div class="comments__my-avatar">
-                                <img class="comments__picture" src="img/userpic-medium.jpg" alt="Аватар пользователя">
+                                <img class="comments__picture" src="uploads/<?= $_SESSION['avatar'] ? htmlspecialchars($_SESSION['avatar']) : 'unnamed.png'?>" alt="Аватар пользователя">
                             </div>
-                            <div class="form__input-section form__input-section--error">
+                            <div class="form__input-section<?= count($errors) > 0 ? ' form__input-section--error' : '' ?>">
                                 <textarea class="comments__textarea form__textarea form__input" placeholder="Ваш комментарий" id="comment_text"></textarea>
                                 <label class="visually-hidden" for="comment_text">Ваш комментарий</label>
                                 <button class="form__error-button button" type="button">!</button>
@@ -58,64 +61,50 @@
                             </div>
                             <button class="comments__submit button button--green" type="submit">Отправить</button>
                         </form>
+
+                        <?php if (count($post_details['comments']) > 0): ?>
+
                         <div class="comments__list-wrapper">
                             <ul class="comments__list">
+                                <?php foreach ($post_details['comments'] as $comment) : ?>
                                 <li class="comments__item user">
                                     <div class="comments__avatar">
-                                        <a class="user__avatar-link" href="#">
-                                            <img class="comments__picture" src="img/userpic-larisa.jpg" alt="Аватар пользователя">
+                                        <a class="user__avatar-link" href="/profile.php?id=<?= $comment['user_id']?>">
+                                            <img class="comments__picture" src="/uploads/<?= $comment['avatar'] ? htmlspecialchars($comment['avatar']) : 'unnamed.png' ?>" alt="Аватар пользователя">
                                         </a>
                                     </div>
                                     <div class="comments__info">
                                         <div class="comments__name-wrapper">
-                                            <a class="comments__user-name" href="#">
-                                                <span>Лариса Роговая</span>
+                                            <a class="comments__user-name" href="/profile.php?id=<?= $comment['user_id']?>">
+                                                <span><?= htmlspecialchars($comment['login'])?></span>
                                             </a>
-                                            <time class="comments__time" datetime="2019-03-20">1 ч назад</time>
+                                            <time class="comments__time" datetime="<?= $comment['datetime'] ?>"><?= get_how_much_time($comment['datetime'])?> назад</time>
                                         </div>
                                         <p class="comments__text">
-                                            Красота!!!1!
+                                            <?= htmlspecialchars($comment['content']) ?>
                                         </p>
                                     </div>
                                 </li>
-                                <li class="comments__item user">
-                                    <div class="comments__avatar">
-                                        <a class="user__avatar-link" href="#">
-                                            <img class="comments__picture" src="img/userpic-larisa.jpg" alt="Аватар пользователя">
-                                        </a>
-                                    </div>
-                                    <div class="comments__info">
-                                        <div class="comments__name-wrapper">
-                                            <a class="comments__user-name" href="#">
-                                                <span>Лариса Роговая</span>
-                                            </a>
-                                            <time class="comments__time" datetime="2019-03-18">2 дня назад</time>
-                                        </div>
-                                        <p class="comments__text">
-                                            Озеро Байкал – огромное древнее озеро в горах Сибири к северу от монгольской границы. Байкал считается самым глубоким озером в мире. Он окружен сетью пешеходных маршрутов, называемых Большой байкальской тропой. Деревня Листвянка, расположенная на западном берегу озера, – популярная отправная точка для летних экскурсий. Зимой здесь можно кататься на коньках и собачьих упряжках.
-                                        </p>
-                                    </div>
-                                </li>
+                                <?php endforeach; ?>
                             </ul>
-                            <a class="comments__more-link" href="#">
-                                <span>Показать все комментарии</span>
-                                <sup class="comments__amount">45</sup>
-                            </a>
                         </div>
+
+                        <?php endif; ?>
                     </div>
+
                 </div>
                 <div class="post-details__user user">
                     <div class="post-details__user-info user__info">
                         <div class="post-details__avatar user__avatar">
-                            <a class="post-details__avatar-link user__avatar-link" href="#">
-                                <img class="post-details__picture user__picture" src="uploads/<?= htmlspecialchars($post_details['avatar']) ?>" alt="Аватар пользователя">
+                            <a class="post-details__avatar-link user__avatar-link" href="/profile.php?id=<?= $post_details['user_id'] ?>">
+                                <img class="post-details__picture user__picture" src="uploads/<?= $post_details['avatar'] ? htmlspecialchars($post_details['avatar']) : 'unnamed.png' ?>" alt="Аватар пользователя">
                             </a>
                         </div>
                         <div class="post-details__name-wrapper user__name-wrapper">
-                            <a class="post-details__name user__name" href="#">
+                            <a class="post-details__name user__name" href="/profile.php?id=<?= $post_details['user_id'] ?>">
                                 <span><?= htmlspecialchars($post_details['login']) ?></span>
                             </a>
-                            <time class="post-details__time user__time" datetime="2014-03-20"><?= get_how_much_time($post_details['user_datetime']) ?> на сайте</time>
+                            <time class="post-details__time user__time" datetime="<?= $post_details['user_datetime'] ?>"><?= get_how_much_time($post_details['user_datetime']) ?> на сайте</time>
                         </div>
                     </div>
                     <div class="post-details__rating user__rating">

@@ -15,7 +15,7 @@ $user_id = $_SESSION['user_id'];
 
 $current_content_type_id = $_GET['content_type'] ?? 'all';
 
-$posts_sql = "SELECT p.id, p.datetime, p.title, p.content, p.link, p.quote_author, u.login, u.avatar, c_t.type_name, c_t.class_name FROM posts p
+$posts_sql = "SELECT p.id, p.datetime, p.title, p.content, p.link, p.quote_author, p.user_id, u.login, u.avatar, c_t.type_name, c_t.class_name FROM posts p
     JOIN users u ON p.user_id = u.id
     JOIN content_type c_t ON p.content_type_id = c_t.id WHERE p.user_id = ?";
 
@@ -42,7 +42,8 @@ $result = mysqli_stmt_get_result($stmt);
 $posts = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 
 $all_posts = include_template('posts.php', [
-    'posts' => $posts
+    'posts' => $posts,
+    'post_type' => 'feed'
 ]);
 
 $content_types = get_content_types($con);
@@ -57,5 +58,6 @@ print (include_template('layout.php', [
     'title' => 'readme: моя лента',
     'content' => $content,
     'user_name' => $_SESSION['login'],
+    'user_id' => $_SESSION['user_id'],
     'header_type' => 'feed',
 ]));

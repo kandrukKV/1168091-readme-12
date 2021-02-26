@@ -1,8 +1,9 @@
 <?php if (isset($posts) && count($posts) > 0): ?>
+
 <?php foreach ($posts as $post): ?>
         <article class="feed__post post post-<?= $post['class_name'] ?>">
             <header class="post__header post__author">
-                <a class="post__author-link" href="#" title="Автор">
+                <a class="post__author-link" href="/profile.php?id=<?= $post['user_id']?>" title="Автор">
                     <div class="post__avatar-wrapper">
                         <img class="post__author-avatar" src="/uploads/<?= $post['avatar'] ? htmlspecialchars($post['avatar']) : 'unnamed.png'?>" alt="Аватар пользователя" width="60" height="60">
                     </div>
@@ -31,22 +32,17 @@
 
                     <?php break; case 'video': ?>
                     <div class="post__main">
+                        <h2><a href="/post.php?id=<?= htmlspecialchars($post['id'])?>"><?= htmlspecialchars($post['title']) ?></a></h2>
                         <div class="post-video__block">
                             <div class="post-video__preview">
-                                <iframe
-                                    width="560"
-                                    height="315"
-                                    src="<?= htmlspecialchars($post['content'])?>"
-                                    frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen>
-                                </iframe>
+                                <?= embed_youtube_video(htmlspecialchars($post['content'])) ?>
                             </div>
                         </div>
                     </div>
 
                     <?php break; case 'quote': ?>
                     <div class="post__main">
+                        <h2><a href="/post.php?id=<?= htmlspecialchars($post['id'])?>"><?= htmlspecialchars($post['title']) ?></a></h2>
                         <blockquote>
                             <p><?= $post['content']?></p>
                             <cite><?= $post['quote_author']?></cite>
@@ -55,11 +51,9 @@
 
                     <?php break; case 'link': ?>
                     <div class="post__main">
+                        <h2><a href="/post.php?id=<?= htmlspecialchars($post['id'])?>"><?= htmlspecialchars($post['title']) ?></a></h2>
                         <div class="post-link__wrapper">
                             <a class="post-link__external" href="/post.php?id=<?= $post['id']?>" title="Перейти по ссылке">
-                                <div class="post-link__icon-wrapper">
-                                    <img src="img/logo-vita.jpg" alt="Иконка">
-                                </div>
                                 <div class="post-link__info">
                                     <h3><?= htmlspecialchars($post['content']); ?></h3>
                                     <span><?= htmlspecialchars($post['link']); ?></span>
