@@ -26,10 +26,25 @@ $posts = get_posts_of_user($con, $user_id);
 for ($i = 0; $i < count($posts); $i++) {
     $posts[$i]['tags'] = get_tags($con, $posts[$i]['id']);
     $posts[$i]['comments'] = get_comments($con, $posts[$i]['id']);
+    $posts[$i]['num_likes'] = get_num_likes($con, $posts[$i]['id']);
+    $posts[$i]['num_reposts'] = get_num_reposts($con, $posts[$i]['id']);
+    $posts[$i]['is_like'] = is_like($con, $posts[$i]['id'], $_SESSION['user_id']);
+}
 
+$isSubscribe = true;
+
+if ($_SESSION['user_id'] !== $user_id) {
+    $author = $_SESSION['user_id'];
+    $sql = "SELECT * FROM subscribers WHERE author=? AND subscription=?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'ii', $author, $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $isSubscribe = mysqli_fetch_row($result);
 }
 
 $content = include_template('user-profile.php', [
+    'isSubscribe' => $isSubscribe,
     'user' => $user,
     'posts' => $posts,
     'user_num_of_posts' => get_num_posts($con, $user['id']),

@@ -1,3 +1,12 @@
+<?php
+
+$p_sort = isset($sort) ? '&sort=' . $sort : '';
+$p_content_type = isset($content_type_id) ? 'content_type=' . $content_type_id : '';
+$p_page = isset($page) ? '&page=' . $page : '';
+
+?>
+
+
 <section class="page__main page__main--popular">
     <div class="container">
         <h1 class="page__title page__title--popular">Популярное</h1>
@@ -8,7 +17,7 @@
                 <b class="popular__sorting-caption sorting__caption">Сортировка:</b>
                 <ul class="popular__sorting-list sorting__list">
                     <li class="sorting__item sorting__item--popular">
-                        <a class="sorting__link sorting__link--active" href="#">
+                        <a class="sorting__link sorting__link--active" href="/popular.php?<?= $p_content_type . $p_page . '&sort=popular' ?>">
                             <span>Популярность</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -16,7 +25,7 @@
                         </a>
                     </li>
                     <li class="sorting__item">
-                        <a class="sorting__link" href="#">
+                        <a class="sorting__link" href="/popular.php?<?= $p_content_type . $p_page . '&sort=likes' ?>">
                             <span>Лайки</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -24,7 +33,7 @@
                         </a>
                     </li>
                     <li class="sorting__item">
-                        <a class="sorting__link" href="#">
+                        <a class="sorting__link" href="/popular.php?<?= $p_content_type . $p_page . '&sort=data' ?>">
                             <span>Дата</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -37,17 +46,15 @@
                 <b class="popular__filters-caption filters__caption">Тип контента:</b>
                 <ul class="popular__filters-list filters__list">
 
-                    <?php $content_type_id = $_GET['content_type'] ?? 'all' ?>
-
                     <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-                        <a class="filters__button filters__button--ellipse filters__button--all <?=  $content_type_id === 'all' ? 'filters__button--active' : ''?>" href="/popular.php">
+                        <a class="filters__button filters__button--ellipse filters__button--all <?=  empty($content_type_id) ? 'filters__button--active' : ''?>" href="/popular.php">
                             <span>Все</span>
                         </a>
                     </li>
 
                     <?php foreach ($content_types as $content_type):?>
                         <li class="popular__filters-item filters__item">
-                            <a class="filters__button filters__button--<?= $content_type['class_name'] ?> button <?=  $content_type_id === $content_type['id'] ? 'filters__button--active' : ''?>" href="/popular.php?content_type=<?= $content_type['id']?>">
+                            <a class="filters__button filters__button--<?= $content_type['class_name'] ?> button <?=  $content_type_id === $content_type['id'] ? 'filters__button--active' : ''?>" href="/popular.php?content_type=<?= $content_type['id'] . $p_sort?>">
                                 <span class="visually-hidden"><?= $content_type['type_name'] ?></span>
                                 <svg class="filters__icon" width="22" height="18">
                                     <use xlink:href="#icon-filter-<?= $content_type['class_name'] ?>"></use>
@@ -151,21 +158,21 @@
                         </div>
                         <div class="post__indicators">
                             <div class="post__buttons">
-                                <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
+                                <a class="post__indicator post__indicator--likes button"<?= !$post['is_like'] ? ' href="/like.php?id=' . $post['id'] . '"' : ''  ?>  title="Лайк">
                                     <svg class="post__indicator-icon" width="20" height="17">
                                         <use xlink:href="#icon-heart"></use>
                                     </svg>
                                     <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
                                         <use xlink:href="#icon-heart-active"></use>
                                     </svg>
-                                    <span>0</span>
+                                    <span><?= $post['likes'] ?></span>
                                     <span class="visually-hidden">количество лайков</span>
                                 </a>
-                                <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
+                                <a class="post__indicator post__indicator--comments button" href="/post.php?id=<?= $post['id'] ?>" title="Комментарии">
                                     <svg class="post__indicator-icon" width="19" height="17">
                                         <use xlink:href="#icon-comment"></use>
                                     </svg>
-                                    <span>0</span>
+                                    <span><?= $post['comments'] ?></span>
                                     <span class="visually-hidden">количество комментариев</span>
                                 </a>
                             </div>
@@ -175,5 +182,20 @@
             <?php endforeach; ?>
 
         </div>
+
+        <?php if ($all_posts_num > $limit):
+
+        $link_right = 'href="/popular.php?' . $p_content_type . '&page=' . ($page + 1) . $p_sort . '"';
+        $link_left = 'href="/popular.php?' . $p_content_type . '&page=' . ($page - 1) . $p_sort . '"';
+
+        ?>
+
+            <div class="popular__page-links">
+                <a class="popular__page-link popular__page-link--prev button button--gray" <?= $page > 1 ? $link_left : '' ?>>Предыдущая страница</a>
+                <a class="popular__page-link popular__page-link--next button button--gray" <?= $page < $num_pages ? $link_right : '' ?>>Следующая страница</a>
+            </div>
+
+        <?php endif; ?>
+
     </div>
 </section>

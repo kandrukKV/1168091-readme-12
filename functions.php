@@ -217,6 +217,42 @@ function get_num_subscribers ($con, $user_id)
     return mysqli_num_rows($result);
 }
 
+function get_num_likes ($con, $post_id) {
+    $sql = "SELECT * FROM likes WHERE post_id = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $post_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_num_rows($result);
+}
+
+function get_num_comments ($con, $post_id) {
+    $sql = "SELECT * FROM comments WHERE post_id = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $post_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_num_rows($result);
+}
+
+function get_num_reposts ($con, $post_id) {
+    $sql = "SELECT * FROM posts WHERE original_post_id = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $post_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_num_rows($result);
+}
+
+function is_like ($con, $post_id, $user_id) {
+    $sql = "SELECT * FROM likes WHERE post_id = ? AND user_id = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'ii', $post_id, $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_num_rows($result);
+}
+
 function get_user_info ($con, $user_id)
 {
     $sql = "SELECT u.id, u.datetime, u.login, u.email, u.avatar
@@ -233,7 +269,7 @@ function get_user_info ($con, $user_id)
 function get_posts_of_user ($con, $user_id)
 {
     $posts_sql = "
-        SELECT
+                SELECT
             p.id,
             p.datetime,
             p.title,
@@ -242,7 +278,8 @@ function get_posts_of_user ($con, $user_id)
             p.quote_author,
             p.user_id,
             p.is_repost,
-            p.real_author,
+            p.original_post_id,
+            pp.user_id as author_id,
             u_p.login as user_login,
             u_p.avatar as user_avatar,
             u_a.login as author_login,
@@ -250,8 +287,9 @@ function get_posts_of_user ($con, $user_id)
             c_t.type_name,
             c_t.class_name
         FROM posts p
+        LEFT JOIN posts pp ON p.original_post_id = pp.id
         JOIN users u_p ON p.user_id = u_p.id
-        LEFT JOIN users u_a ON p.real_author = u_a.id
+        LEFT JOIN users u_a ON pp.user_id = u_a.id
         JOIN content_type c_t ON p.content_type_id = c_t.id
         WHERE p.user_id = ?";
 

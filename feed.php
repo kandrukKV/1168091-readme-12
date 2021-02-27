@@ -41,6 +41,13 @@ $result = mysqli_stmt_get_result($stmt);
 
 $posts = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 
+for ($i = 0; $i < count($posts); $i++) {
+    $posts[$i]['num_likes'] = get_num_likes($con, $posts[$i]['id']);
+    $posts[$i]['num_comments'] = get_num_comments($con, $posts[$i]['id']);
+    $posts[$i]['num_reposts'] = get_num_reposts($con, $posts[$i]['id']);
+    $posts[$i]['is_like'] = is_like($con, $posts[$i]['id'], $_SESSION['user_id']);
+}
+
 $all_posts = include_template('posts.php', [
     'posts' => $posts,
     'post_type' => 'feed'

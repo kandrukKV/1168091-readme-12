@@ -22,10 +22,16 @@
                         <span class="profile__rating-text user__rating-text">подписчиков</span>
                     </p>
                 </div>
+
+                <?php if ($_SESSION['user_id'] !== $user['id']): ?>
                 <div class="profile__user-buttons user__buttons">
-                    <button class="profile__user-button user__button user__button--subscription button button--main" type="button">Подписаться</button>
+
+                    <a class="profile__user-button user__button user__button--subscription button button--main"
+                       href="/subscribe.php?id=<?= $user['id'] ?>"><?= $isSubscribe ? 'Отписаться' : 'Подписаться' ?></a>
+
                     <a class="profile__user-button user__button user__button--writing button button--green" href="#">Сообщение</a>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
         <div class="profile__tabs-wrapper tabs">
@@ -62,9 +68,9 @@
                             <article class="profile__post post post-<?= $post['class_name']?>">
                                 <header class="post__header">
 
-                                    <?php if($post['real_author']): ?>
+                                    <?php if($post['is_repost']): ?>
                                     <div class="post__author">
-                                        <a class="post__author-link" href="/profile.php?id=<?= $post['real_author'] ?>" title="Автор">
+                                        <a class="post__author-link" href="/profile.php?id=<?= $post['author_id'] ?>" title="Автор">
                                             <div class="post__avatar-wrapper post__avatar-wrapper--repost">
                                                 <img class="post__author-avatar" src="/uploads/<?= $post['author_avatar'] ? htmlspecialchars($post['author_avatar']) : 'unnamed.png'?>" alt="Аватар пользователя">
                                             </div>
@@ -83,21 +89,21 @@
                                 <footer class="post__footer">
                                     <div class="post__indicators">
                                         <div class="post__buttons">
-                                            <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
+                                            <a class="post__indicator post__indicator--likes button"<?= !$post['is_like'] ? ' href="/like.php?id=' . $post['id'] . '"' : ''  ?> title="Лайк">
                                                 <svg class="post__indicator-icon" width="20" height="17">
                                                     <use xlink:href="#icon-heart"></use>
                                                 </svg>
                                                 <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
                                                     <use xlink:href="#icon-heart-active"></use>
                                                 </svg>
-                                                <span>250</span>
+                                                <span><?= $post['num_likes'] ?></span>
                                                 <span class="visually-hidden">количество лайков</span>
                                             </a>
-                                            <a class="post__indicator post__indicator--repost button" href="#" title="Репост">
+                                            <a class="post__indicator post__indicator--repost button" href="/repost.php?id=<?= $post['id'] ?>" title="Репост">
                                                 <svg class="post__indicator-icon" width="19" height="17">
                                                     <use xlink:href="#icon-repost"></use>
                                                 </svg>
-                                                <span>5</span>
+                                                <span><?= $post['num_reposts']?></span>
                                                 <span class="visually-hidden">количество репостов</span>
                                             </a>
                                         </div>

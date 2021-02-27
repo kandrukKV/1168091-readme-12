@@ -19,7 +19,7 @@ $post_id = $_GET['id'];
 
 $con = connect_to_database();
 
-$sql = "SELECT p.datetime, p.title, p.content, p.link, p.views_count, p.user_id, p.quote_author, p.views_count, u.login, u.avatar, u.datetime as user_datetime, c_t.class_name FROM posts p
+$sql = "SELECT p.id, p.datetime, p.title, p.content, p.link, p.views_count, p.user_id, p.quote_author, p.views_count, u.login, u.avatar, u.datetime as user_datetime, c_t.class_name FROM posts p
     JOIN users u ON p.user_id = u.id
     JOIN content_type c_t ON p.content_type_id = c_t.id
     WHERE p.id = ?";
@@ -32,6 +32,10 @@ $result = mysqli_stmt_get_result($stmt);
 $post_details = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 $post_details['comments'] = get_comments($con, $post_id);
+$post_details['num_likes'] = get_num_likes($con, $post_id);
+$post_details['num_comments'] = count($post_details['comments']);
+$post_details['num_reposts'] = get_num_reposts($con, $post_id);
+$post_details['is_like'] = is_like($con, $post_id, $_SESSION['user_id']);
 
 if (!$post_details) {
     echo "Страница не найдена";

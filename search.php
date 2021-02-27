@@ -71,10 +71,20 @@ if ($_SERVER['REQUEST_METHOD']=='GET' && isset($_GET['search_request'])) {
     $search_results = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
+for ($i = 0; $i < count($search_results); $i++) {
+    $search_results[$i]['tags'] = get_tags($con, $search_results[$i]['id']);
+    $search_results[$i]['num_comments'] = get_num_comments($con, $search_results[$i]['id']);
+    $search_results[$i]['num_likes'] = get_num_likes($con, $search_results[$i]['id']);
+    $search_results[$i]['num_reposts'] = get_num_reposts($con, $search_results[$i]['id']);
+    $search_results[$i]['is_like'] = is_like($con, $search_results[$i]['id'], $_SESSION['user_id']);
+}
+
 $all_posts = include_template('posts.php', [
     'posts' => $search_results,
     'post_type' => 'feed'
 ]);
+
+
 
 if (count($search_results) > 0) {
     $content = include_template('search-result.php', [
