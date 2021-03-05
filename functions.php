@@ -234,24 +234,6 @@ function get_num_subscribers ($con, $user_id)
     return mysqli_num_rows($result);
 }
 
-function get_num_likes ($con, $post_id) {
-    $sql = "SELECT * FROM likes WHERE post_id = ?";
-    $stmt = mysqli_prepare($con, $sql);
-    mysqli_stmt_bind_param($stmt, 'i', $post_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    return mysqli_num_rows($result);
-}
-
-function get_num_comments ($con, $post_id) {
-    $sql = "SELECT * FROM comments WHERE post_id = ?";
-    $stmt = mysqli_prepare($con, $sql);
-    mysqli_stmt_bind_param($stmt, 'i', $post_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    return mysqli_num_rows($result);
-}
-
 function get_num_reposts ($con, $post_id) {
     $sql = "SELECT * FROM posts WHERE original_post_id = ?";
     $stmt = mysqli_prepare($con, $sql);

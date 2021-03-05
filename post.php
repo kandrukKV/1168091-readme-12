@@ -71,6 +71,8 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD']=='POST') {
     if (empty($_POST['content'])) {
         $errors['content'] = 'Это поле обязательно для заполнения';
+    } elseif (mb_strlen($_POST['content']) <= 4) {
+        $errors['content'] = 'Слишком коротки комментарий';
     }
 
     if (count($errors) === 0) {
