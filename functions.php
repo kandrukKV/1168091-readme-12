@@ -36,7 +36,7 @@ function crop_text($text, $text_limit = 300)
 function get_how_much_time($time)
 {
 
-    $diffTime = time() - strtotime($time . ' UTC');
+    $diffTime = time() - strtotime($time);
 
     $diffMinutes = floor($diffTime / 60);
 

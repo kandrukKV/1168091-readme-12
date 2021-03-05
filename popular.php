@@ -9,8 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 include_once ('functions.php');
 include_once ('helpers.php');
 
-date_default_timezone_set('Europe/Moscow');
-
 $con = connect_to_database();
 
 $content_types = get_content_types($con);
