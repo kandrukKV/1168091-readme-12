@@ -19,7 +19,24 @@ $post_id = $_GET['id'];
 
 $con = connect_to_database();
 
-$sql = "SELECT p.datetime, p.title, p.content, p.link, p.views_count, p.user_id, p.quote_author, p.views_count, u.login, u.avatar, u.datetime as user_datetime, c_t.class_name FROM posts p
+$sql = "
+    SELECT
+           p.id,
+           p.datetime,
+           p.title,
+           p.content,
+           p.link,
+           p.views_count,
+           p.user_id,
+           p.quote_author,
+           p.views_count,
+           u.login,
+           u.avatar,
+           u.datetime as user_datetime,
+           c_t.class_name,
+           (SELECT count(*) FROM likes WHERE post_id = p.id) AS likes_count,
+           (SELECT count(*) FROM comments WHERE post_id = p.id) AS comments_count
+    FROM posts p
     JOIN users u ON p.user_id = u.id
     JOIN content_type c_t ON p.content_type_id = c_t.id
     WHERE p.id = ?";
@@ -28,7 +45,6 @@ $stmt = mysqli_prepare($con, $sql);
 mysqli_stmt_bind_param($stmt, 'i', $post_id);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
-
 $post_details = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 if (!$post_details) {
@@ -37,61 +53,49 @@ if (!$post_details) {
     exit;
 }
 
+$is_subscribe = true;
+
 $user_id = $post_details['user_id'];
-$sql = "SELECT * FROM posts WHERE user_id = $user_id";
-$result = mysqli_query($con, $sql);
-$user_num_of_posts = mysqli_num_rows($result) ? mysqli_num_rows($result) : '0';
 
-$sql = "SELECT * FROM subscribers WHERE author = $user_id";
-$result = mysqli_query($con, $sql);
-$user_num_of_subscribers = mysqli_num_rows($result) ? mysqli_num_rows($result) : '0';
+if ($_SESSION['user_id'] !== $user_id) {
+    $author = $_SESSION['user_id'];
+    $is_subscribe = is_subscribe($con, $author, $user_id);
+}
 
+$post_details['comments'] = get_comments($con, $post_id);
+$post_details['num_reposts'] = get_num_reposts($con, $post_id);
+$post_details['is_like'] = is_like($con, $post_id, $_SESSION['user_id']);
 
-//get tags
+$errors = [];
 
-$sql = "SELECT ht.tag_name FROM posts_hashtags ph JOIN hash_tags ht ON ht.id = ph.hashtag_id WHERE post_id = ?";
-$stmt = mysqli_prepare($con, $sql);
-mysqli_stmt_bind_param($stmt, 'i', $post_id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
+if ($_SERVER['REQUEST_METHOD']=='POST') {
+    if (empty($_POST['content'])) {
+        $errors['content'] = 'Это поле обязательно для заполнения';
+    } elseif (mb_strlen($_POST['content']) <= 4) {
+        $errors['content'] = 'Слишком коротки комментарий';
+    }
 
-switch ($post_details['class_name']) {
-    case 'text':
-        $content_inner = include_template('post-text.php', [
-            'content' => $post_details['content']
-        ]);
-        break;
-    case 'photo':
-        $content_inner = include_template('post-photo.php', [
-            'content' => $post_details['content']
-        ]);
-        break;
-    case 'quote':
-        $content_inner = include_template('post-quote.php', [
-            'content' => $post_details['content'],
-            'quote_author' => $post_details['quote_author']
-        ]);
-        break;
-    case 'link':
-        $content_inner = include_template('post-link.php', [
-            'content' => $post_details['content'],
-            'link' => $post_details['link']
+    if (count($errors) === 0) {
+        $res = add_comment($con, trim($_POST['content']), $_SESSION['user_id'], $_POST['post_id']);
+        if ($res) {
+            header('Location:' . 'post.php?id=' . $_POST['post_id']);
+            exit();
+        } else {
+            $errors['content'] = 'Неудачная попытка отправки';
+        }
+    }
 
-        ]);
-        break;
-    case 'video':
-        $content_inner = include_template('post-video.php', [
-            'content' => $post_details['content']
-        ]);
+} else {
+    add_view($con, $post_id);
 }
 
 $content = include_template('post-details.php', [
-    'content_inner' => $content_inner,
-    'tags' => $tags,
+    'errors' => $errors,
+    'tags' => get_tags($con, $post_id),
     'post_details' => $post_details,
-    'user_num_of_posts' => $user_num_of_posts,
-    'user_num_of_subscribers' => $user_num_of_subscribers
+    'is_subscribe' => $is_subscribe,
+    'user_num_of_posts' => get_num_posts($con, $post_details['user_id']),
+    'user_num_of_subscribers' => get_num_subscribers($con, $post_details['user_id']),
 ]);
 
 print (include_template('layout.php', [
