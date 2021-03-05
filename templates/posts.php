@@ -27,7 +27,7 @@
                     <div class="post__main">
                         <h2><a href="/post.php?id=<?= htmlspecialchars($post['id'])?>"><?= htmlspecialchars($post['title'])?></a></h2>
                         <p><?= htmlspecialchars($post['content'])?></p>
-                        <a class="post-text__more-link" href="#">Читать далее</a>
+                        <a class="post-text__more-link" href="/post.php?id=<?= htmlspecialchars($post['id'])?>">Читать далее</a>
                     </div>
 
                     <?php break; case 'video': ?>
@@ -76,14 +76,14 @@
                         <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
                             <use xlink:href="#icon-heart-active"></use>
                         </svg>
-                        <span><?= $post['num_likes'] ?></span>
+                        <span><?= $post['likes_count'] ?></span>
                         <span class="visually-hidden">количество лайков</span>
                     </a>
                     <a class="post__indicator post__indicator--comments button" href="/post.php?id=<?= $post['id']?>" title="Комментарии">
                         <svg class="post__indicator-icon" width="19" height="17">
                             <use xlink:href="#icon-comment"></use>
                         </svg>
-                        <span><?= $post['num_comments'] ?></span>
+                        <span><?= $post['comments_count'] ?></span>
                         <span class="visually-hidden">количество комментариев</span>
                     </a>
                     <a class="post__indicator post__indicator--repost button" href="/repost.php?id=<?= $post['id']?>" title="Репост">

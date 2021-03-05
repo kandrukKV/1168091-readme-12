@@ -1,6 +1,7 @@
 <?php
 
 $p_sort = isset($sort) ? '&sort=' . $sort : '';
+$p_line = isset($line) ? '&line=' . $line : '';
 $p_content_type = isset($content_type_id) ? 'content_type=' . $content_type_id : '';
 $p_page = isset($page) ? '&page=' . $page : '';
 
@@ -17,7 +18,7 @@ $p_page = isset($page) ? '&page=' . $page : '';
                 <b class="popular__sorting-caption sorting__caption">Сортировка:</b>
                 <ul class="popular__sorting-list sorting__list">
                     <li class="sorting__item sorting__item--popular">
-                        <a class="sorting__link sorting__link--active" href="/popular.php?<?= $p_content_type . $p_page . '&sort=popular' ?>">
+                        <a class="sorting__link<?=$sort === 'popular' ? ' sorting__link--active' : ''?>  <?= $line === 'up' ? 'sorting__link--reverse' : ''?>" href="/popular.php?<?= $p_content_type . $p_page . '&sort=popular' ?>&line=<?= $line === 'down' && $sort === 'popular' ? 'up' : 'down'?>">
                             <span>Популярность</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -25,7 +26,7 @@ $p_page = isset($page) ? '&page=' . $page : '';
                         </a>
                     </li>
                     <li class="sorting__item">
-                        <a class="sorting__link" href="/popular.php?<?= $p_content_type . $p_page . '&sort=likes' ?>">
+                        <a class="sorting__link<?=$sort === 'likes' ? ' sorting__link--active' : ''?> <?= $line === 'up' ? 'sorting__link--reverse' : ''?>" href="/popular.php?<?= $p_content_type . $p_page . '&sort=likes' ?>&line=<?= $line === 'down' && $sort === 'likes' ? 'up' : 'down'?>">
                             <span>Лайки</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -33,7 +34,7 @@ $p_page = isset($page) ? '&page=' . $page : '';
                         </a>
                     </li>
                     <li class="sorting__item">
-                        <a class="sorting__link" href="/popular.php?<?= $p_content_type . $p_page . '&sort=data' ?>">
+                        <a class="sorting__link<?=$sort === 'date' ? ' sorting__link--active' : ''?> <?= $line === 'up' ? 'sorting__link--reverse' : ''?>" href="/popular.php?<?= $p_content_type . $p_page . '&sort=date' ?>&line=<?= $line === 'down' && $sort === 'date' ? 'up' : 'down'?>">
                             <span>Дата</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -165,14 +166,14 @@ $p_page = isset($page) ? '&page=' . $page : '';
                                     <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
                                         <use xlink:href="#icon-heart-active"></use>
                                     </svg>
-                                    <span><?= $post['likes'] ?></span>
+                                    <span><?= $post['likes_count'] ?></span>
                                     <span class="visually-hidden">количество лайков</span>
                                 </a>
                                 <a class="post__indicator post__indicator--comments button" href="/post.php?id=<?= $post['id'] ?>" title="Комментарии">
                                     <svg class="post__indicator-icon" width="19" height="17">
                                         <use xlink:href="#icon-comment"></use>
                                     </svg>
-                                    <span><?= $post['comments'] ?></span>
+                                    <span><?= $post['comments_count'] ?></span>
                                     <span class="visually-hidden">количество комментариев</span>
                                 </a>
                             </div>
@@ -185,8 +186,8 @@ $p_page = isset($page) ? '&page=' . $page : '';
 
         <?php if ($all_posts_num > $limit):
 
-        $link_right = 'href="/popular.php?' . $p_content_type . '&page=' . ($page + 1) . $p_sort . '"';
-        $link_left = 'href="/popular.php?' . $p_content_type . '&page=' . ($page - 1) . $p_sort . '"';
+        $link_right = 'href="/popular.php?' . $p_content_type . '&page=' . ($page + 1) . $p_sort . $p_line . '"';
+        $link_left = 'href="/popular.php?' . $p_content_type . '&page=' . ($page - 1) . $p_sort . $p_line . '"';
 
         ?>
 

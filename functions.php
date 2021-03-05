@@ -35,7 +35,9 @@ function crop_text($text, $text_limit = 300)
 
 function get_how_much_time($time)
 {
-    $diffTime = time() - strtotime($time);
+
+    $diffTime = time() - strtotime($time . ' UTC');
+
     $diffMinutes = floor($diffTime / 60);
 
     if ($diffMinutes < 60) {
@@ -145,12 +147,27 @@ function add_tags ($con, $tags, $post_id)
 
 function add_user ($con, $email, $login, $pass, $avatar)
 {
-
     $passwordHash = password_hash($pass, PASSWORD_DEFAULT);
     $sql = "INSERT INTO `users` (`email`, `pass`, `login`, `avatar`) VALUES (?, ?, ?, ?)";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 'ssss', $email, $passwordHash, $login, $avatar);
 
+    return mysqli_stmt_execute($stmt);
+}
+
+function add_view ($con, $post_id)
+{
+    $sql = "UPDATE `posts` SET `views_count` = `views_count` + 1 WHERE id = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $post_id);
+    return mysqli_stmt_execute($stmt);
+}
+
+function add_comment ($con, $content, $user_id, $post_id)
+{
+    $sql = "INSERT INTO `comments` (`content`, `user_id`, `post_id`) VALUES (?, ?, ?)";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'sii', $content,$user_id, $post_id);
     return mysqli_stmt_execute($stmt);
 }
 
@@ -209,7 +226,7 @@ function get_num_posts ($con, $user_id)
 
 function get_num_subscribers ($con, $user_id)
 {
-    $sql = "SELECT * FROM subscribers WHERE author = ?";
+    $sql = "SELECT * FROM subscribers WHERE subscription = ?";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 'i', $user_id);
     mysqli_stmt_execute($stmt);
@@ -253,6 +270,16 @@ function is_like ($con, $post_id, $user_id) {
     return mysqli_num_rows($result);
 }
 
+function is_subscribe ($con, $user_one, $user_two)
+{
+    $sql = "SELECT * FROM subscribers WHERE author = ? AND subscription = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'ii', $user_one, $user_two);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_row($result);
+}
+
 function get_user_info ($con, $user_id)
 {
     $sql = "SELECT u.id, u.datetime, u.login, u.email, u.avatar
@@ -280,12 +307,15 @@ function get_posts_of_user ($con, $user_id)
             p.is_repost,
             p.original_post_id,
             pp.user_id as author_id,
+            pp.datetime as real_time,
             u_p.login as user_login,
             u_p.avatar as user_avatar,
             u_a.login as author_login,
             u_a.avatar as author_avatar,
             c_t.type_name,
-            c_t.class_name
+            c_t.class_name,
+            (SELECT count(*) FROM likes WHERE post_id = p.id) AS likes_count,
+            (SELECT count(*) FROM comments WHERE post_id = p.id) AS comments_count
         FROM posts p
         LEFT JOIN posts pp ON p.original_post_id = pp.id
         JOIN users u_p ON p.user_id = u_p.id

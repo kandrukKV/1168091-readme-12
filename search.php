@@ -28,7 +28,9 @@ if ($_SERVER['REQUEST_METHOD']=='GET' && isset($_GET['search_request'])) {
                u.login,
                u.avatar,
                c_t.type_name,
-               c_t.class_name
+               c_t.class_name,
+               (SELECT count(*) FROM likes WHERE post_id = p.id) AS likes_count,
+               (SELECT count(*) FROM comments WHERE post_id = p.id) AS comments_count
         FROM posts p
         JOIN users u ON p.user_id = u.id
         JOIN content_type c_t ON p.content_type_id = c_t.id
@@ -54,7 +56,9 @@ if ($_SERVER['REQUEST_METHOD']=='GET' && isset($_GET['search_request'])) {
             c_t.type_name,
             c_t.class_name,
             h_t.id,
-            h_t.tag_name
+            h_t.tag_name,
+            (SELECT count(*) FROM likes WHERE post_id = p.id) AS likes_count,
+            (SELECT count(*) FROM comments WHERE post_id = p.id) AS comments_count
         FROM posts_hashtags p_ht
         JOIN posts p ON p_ht.post_id = p.id
         JOIN users u ON p.user_id = u.id
@@ -73,8 +77,6 @@ if ($_SERVER['REQUEST_METHOD']=='GET' && isset($_GET['search_request'])) {
 
 for ($i = 0; $i < count($search_results); $i++) {
     $search_results[$i]['tags'] = get_tags($con, $search_results[$i]['id']);
-    $search_results[$i]['num_comments'] = get_num_comments($con, $search_results[$i]['id']);
-    $search_results[$i]['num_likes'] = get_num_likes($con, $search_results[$i]['id']);
     $search_results[$i]['num_reposts'] = get_num_reposts($con, $search_results[$i]['id']);
     $search_results[$i]['is_like'] = is_like($con, $search_results[$i]['id'], $_SESSION['user_id']);
 }

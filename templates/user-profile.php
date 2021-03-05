@@ -27,9 +27,11 @@
                 <div class="profile__user-buttons user__buttons">
 
                     <a class="profile__user-button user__button user__button--subscription button button--main"
-                       href="/subscribe.php?id=<?= $user['id'] ?>"><?= $isSubscribe ? 'Отписаться' : 'Подписаться' ?></a>
-
+                       href="/subscribe.php?id=<?= $user['id'] ?>"><?= $is_subscribe ? 'Отписаться' : 'Подписаться' ?></a>
+                    <?php if($is_subscribe): ?>
                     <a class="profile__user-button user__button user__button--writing button button--green" href="#">Сообщение</a>
+                    <?php endif;?>
+
                 </div>
                 <?php endif; ?>
             </div>
@@ -76,7 +78,7 @@
                                             </div>
                                             <div class="post__info">
                                                 <b class="post__author-name">Репост: <?= $post['author_login']?></b>
-                                                <time class="post__time" datetime="<?= $post['datetime'] ?>">Время реального поста назад</time>
+                                                <time class="post__time" datetime="<?= $post['real_time'] ?>"><?= get_how_much_time($post['real_time']) ?> назад</time>
                                             </div>
                                         </a>
                                     </div>
@@ -96,7 +98,7 @@
                                                 <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
                                                     <use xlink:href="#icon-heart-active"></use>
                                                 </svg>
-                                                <span><?= $post['num_likes'] ?></span>
+                                                <span><?= $post['likes_count'] ?></span>
                                                 <span class="visually-hidden">количество лайков</span>
                                             </a>
                                             <a class="post__indicator post__indicator--repost button" href="/repost.php?id=<?= $post['id'] ?>" title="Репост">
@@ -118,51 +120,42 @@
 
                                     <?php if(isset($_GET['show']) && $post['id'] == $_GET['show']): ?>
 
-                                    <?php if (count($post['comments']) > 0): ?>
+                                        <?php if ($post['comments_count'] > 0): ?>
 
                                         <div class="comments">
-                                        <div class="comments__list-wrapper">
-                                            <ul class="comments__list">
-                                                <?php foreach ($post['comments'] as $comment): ?>
-                                                <li class="comments__item user">
-                                                    <div class="comments__avatar">
-                                                        <a class="user__avatar-link" href="/profile.php?id=<?= $comment['user_id'] ?>">
-                                                            <img class="comments__picture" src="uploads/<?= $comment['avatar'] ? htmlspecialchars($comment['avatar']) : 'unnamed.png' ?>" alt="Аватар пользователя">
-                                                        </a>
-                                                    </div>
-                                                    <div class="comments__info">
-                                                        <div class="comments__name-wrapper">
-                                                            <a class="comments__user-name" href=/profile.php?id=<?= $comment['user_id'] ?>">
-                                                                <span>Лариса Роговая</span>
+                                            <div class="comments__list-wrapper">
+                                                <ul class="comments__list">
+                                                    <?php foreach ($post['comments'] as $comment): ?>
+                                                    <li class="comments__item user">
+                                                        <div class="comments__avatar">
+                                                            <a class="user__avatar-link" href="/profile.php?id=<?= $comment['user_id'] ?>">
+                                                                <img class="comments__picture" src="uploads/<?= $comment['avatar'] ? htmlspecialchars($comment['avatar']) : 'unnamed.png' ?>" alt="Аватар пользователя">
                                                             </a>
-                                                            <time class="comments__time" datetime="<?=$comment['datetime']?>"><?= get_how_much_time($comment['datetime']) ?>  назад</time>
                                                         </div>
-                                                        <p class="comments__text">
-                                                            <?= htmlspecialchars($comment['content']) ?>
-                                                        </p>
-                                                    </div>
-                                                </li>
-                                                <?php endforeach; ?>
-                                            </ul>
+                                                        <div class="comments__info">
+                                                            <div class="comments__name-wrapper">
+                                                                <a class="comments__user-name" href=/profile.php?id=<?= $comment['user_id'] ?>">
+                                                                    <span>Лариса Роговая</span>
+                                                                </a>
+                                                                <time class="comments__time" datetime="<?=$comment['datetime']?>"><?= get_how_much_time($comment['datetime']) ?>  назад</time>
+                                                            </div>
+                                                            <p class="comments__text">
+                                                                <?= htmlspecialchars($comment['content']) ?>
+                                                            </p>
+                                                        </div>
+                                                    </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <?php endif; ?>
+                                        <?php endif; ?>
 
-                                    <form class="comments__form form" action="#" method="post">
-                                        <div class="comments__my-avatar">
-                                            <img class="comments__picture" src="img/userpic-medium.jpg" alt="Аватар пользователя">
+                                    <?php elseif($post['comments_count'] > 0): ?>
+
+                                        <div class="comments">
+                                            <a class="comments__button button" href="/profile.php?id=<?= $post['user_id'] ?>&show=<?= $post['id']?>">Показать комментарии</a>
                                         </div>
-                                        <textarea class="comments__textarea form__textarea" placeholder="Ваш комментарий"></textarea>
-                                        <label class="visually-hidden">Ваш комментарий</label>
-                                        <button class="comments__submit button button--green" type="submit">Отправить</button>
-                                    </form>
-
-                                    <?php else: ?>
-
-                                    <div class="comments">
-                                        <a class="comments__button button" href="/profile.php?id=<?= $post['user_id'] ?>&show=<?= $post['id']?>">Показать комментарии</a>
-                                    </div>
 
                                     <?php endif;?>
 
