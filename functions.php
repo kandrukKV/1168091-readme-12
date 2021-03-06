@@ -383,3 +383,52 @@ function get_comments ($con, $post_id) {
     return $comments ? $comments : [];
 }
 
+function get_likes_of_user ($con, $user_id)
+{
+    $posts_sql = "SELECT
+                p.id,
+                p.title,
+                p.content,
+                p.link,
+                p.quote_author,
+                lk.datetime,
+                u.id as user_id,
+                u.login,
+                u.avatar,
+                c_t.class_name
+            FROM posts p
+            JOIN likes lk ON lk.post_id = p.id
+            JOIN users u ON u.id = lk.user_id
+            JOIN content_type c_t ON p.content_type_id = c_t.id
+            WHERE p.user_id = ?
+            ORDER BY lk.datetime DESC";
+
+    $stmt = mysqli_prepare($con, $posts_sql);
+    mysqli_stmt_bind_param($stmt, 'i', $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+}
+
+function get_subscribers ($con, $user_id)
+{
+    $posts_sql = "
+            SELECT
+            sc.subscription as sub_id,
+            u.id,
+            u.datetime,
+            u.login,
+            u.avatar,
+            (SELECT count(*) FROM posts WHERE user_id = sc.subscription) AS posts_count,
+            (SELECT count(*) FROM subscribers WHERE subscription = sc.subscription) AS sub_count
+            FROM subscribers sc
+            JOIN users u ON u.id = sc.subscription
+            WHERE sc.author = ?";
+    $stmt = mysqli_prepare($con, $posts_sql);
+    mysqli_stmt_bind_param($stmt, 'i', $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+}
