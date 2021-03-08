@@ -515,10 +515,9 @@ function send_message ($con, $content, $sender, $recipient)
 function send_mail ($target_email, $body, $subject)
 {
 
-    $transport = (new Swift_SmtpTransport('phpdemo.ru', '465'))
+    $transport = (new Swift_SmtpTransport('phpdemo.ru', '25'))
         ->setUsername('keks@phpdemo.ru')
-        ->setPassword('htmlacademy')
-        ->setEncryption('SSL');
+        ->setPassword('htmlacademy');
 
     $mailer = new Swift_Mailer($transport);
 

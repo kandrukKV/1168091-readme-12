@@ -51,12 +51,12 @@ if ($user) {
             $target_email = [];
             array_push($target_email, $user['email']);
 
-            echo $body = 'Здравствуйте, '
+            $body = 'Здравствуйте, '
                 . $user['login'] . ' на вас подписался новый пользователь '
                 . $_SESSION['login'] . '. Вот ссылка на ссылка на его профиль ' . $_SERVER['SERVER_NAME']
                 . '/profile.php?id=' . $_SESSION['user_id'];
 
-           echo $subject = 'У вас новый подписчик.';
+            $subject = 'У вас новый подписчик.';
 
             send_mail($target_email, $body, $subject);
         }
