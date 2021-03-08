@@ -62,7 +62,7 @@
                             </a>
                         </li>
                         <li class="header__my-page header__my-page--messages">
-                            <a class="header__page-link" href="/messages.html" title="Личные сообщения">
+                            <a class="header__page-link<?= $header_type === 'messages' ? ' header__page-link--active' : '' ?>" href="/messages.php" title="Личные сообщения">
                                 <span class="visually-hidden">Личные сообщения</span>
                             </a>
                         </li>
@@ -99,10 +99,12 @@
                                                 </a>
                                             </li>
                                             <li class="header__profile-nav-item">
-                                                <a class="header__profile-nav-link" href="#">
+                                                <a class="header__profile-nav-link" href="/messages.php">
                                                   <span class="header__profile-nav-text">
                                                     Сообщения
-                                                    <i class="header__profile-indicator">2</i>
+                                                      <?php if ($all_msg_count > 0) : ?>
+                                                        <i class="header__profile-indicator"><?= $all_msg_count?></i>
+                                                      <?php endif; ?>
                                                   </span>
                                                 </a>
                                             </li>
@@ -119,7 +121,7 @@
                                 </div>
                             </li>
 
-                            <?php if ($header_type === 'popular' || $header_type === 'feed' || $header_type === 'search') : ?>
+                            <?php if ($header_type === 'popular' || $header_type === 'feed' || $header_type === 'search' || $header_type === 'messages') : ?>
                                 <li>
                                     <a class="header__post-button button button--transparent" href="/add.php">Пост</a>
                                 </li>

@@ -115,5 +115,5 @@ $content = include_template('registration.php', [
 print (include_template('layout.php', [
     'title' => 'readme: регистрация',
     'content' => $content,
-    'header_type' => 'registration'
+    'header_type' => 'registration',
 ]));

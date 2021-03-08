@@ -82,4 +82,5 @@ print (include_template('layout.php', [
     'user_name' => $_SESSION['login'],
     'user_id' => $_SESSION['user_id'],
     'header_type' => 'feed',
+    'all_msg_count' => get_count_my_massages($con, $user_id)
 ]));

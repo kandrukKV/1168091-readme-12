@@ -432,3 +432,100 @@ function get_subscribers ($con, $user_id)
 
     return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 }
+
+function get_correspondence ($con, $member_id, $user_id)
+{
+    $sql = "SELECT ms.id as ms_id, ms.datetime, ms.content, us.id as user_id, us.login, us.avatar FROM messages ms
+            JOIN users us ON sender = us.id
+            WHERE (recipient = ? and sender = ?) OR (recipient = ? and sender = ?)
+            ORDER BY ms.datetime DESC";
+
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'iiii', $user_id, $member_id, $member_id, $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+
+}
+
+function get_members ($con, $user_id)
+{
+    $posts_sql = "
+        SELECT sender as member_id, u.login, u.avatar
+        FROM messages
+        JOIN users u ON u.id = sender
+        WHERE recipient = ?
+        UNION
+        SELECT recipient as member_id, u.login, u.avatar FROM messages
+        JOIN users u ON u.id = recipient
+        WHERE sender = ?";
+
+    $stmt = mysqli_prepare($con, $posts_sql);
+    mysqli_stmt_bind_param($stmt, 'ii', $user_id, $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+}
+
+function get_last_message ($con, $member_id, $user_id)
+{
+    $sql = "SELECT ms.id, ms.datetime, ms.content,
+            (SELECT count(*) FROM messages
+            WHERE ((recipient = ? and sender = ?)) AND is_new_message = 1) as new_msg_count
+            FROM messages ms
+            WHERE (recipient = ? and sender = ?) OR (recipient = ? and sender = ?)
+            ORDER BY ms.datetime DESC LIMIT 1";
+
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'iiiiii',  $member_id, $user_id, $user_id, $member_id, $member_id, $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    return $result ? mysqli_fetch_array($result, MYSQLI_ASSOC) : [];
+}
+
+function get_count_my_massages ($con, $user_id)
+{
+    $sql = "SELECT count(*) as count FROM messages WHERE recipient = ? AND is_new_message = 1";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_array($result, MYSQLI_ASSOC)['count'];
+}
+
+function set_is_new_message ($con, $user_id, $member_id) {
+    $sql = "UPDATE messages SET is_new_message = 0
+            WHERE (recipient = ? and sender = ?) AND is_new_message = 1";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'ii',  $user_id,  $member_id);
+    mysqli_stmt_execute($stmt);
+}
+
+function send_message ($con, $content, $sender, $recipient)
+{
+    $sql = "INSERT INTO messages (content, sender, recipient) VALUES (?, ?, ?);";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'sii',  $content, $sender,  $recipient);
+    return mysqli_stmt_execute($stmt);
+}
+
+function send_mail ($target_email, $body, $subject)
+{
+
+    $transport = (new Swift_SmtpTransport('phpdemo.ru', '465'))
+        ->setUsername('keks@phpdemo.ru')
+        ->setPassword('htmlacademy')
+        ->setEncryption('SSL');
+
+    $mailer = new Swift_Mailer($transport);
+
+    $message = (new Swift_Message($subject))
+        ->setFrom(['keks@phpdemo.ru' => 'readme: оповещение'])
+        ->setTo($target_email)
+        ->setBody($body);
+
+    return $mailer->send($message);
+}

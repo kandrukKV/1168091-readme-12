@@ -1,4 +1,5 @@
 <?php
+require_once 'vendor/autoload.php';
 include_once ('helpers.php');
 include_once ('functions.php');
 
@@ -24,8 +25,9 @@ $stmt = mysqli_prepare($con, $sql);
 mysqli_stmt_bind_param($stmt, 'i', $subscriber);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
+$user = mysqli_fetch_assoc($result);
 
-if (mysqli_fetch_row($result)) {
+if ($user) {
 
     $sql = "SELECT * FROM subscribers WHERE author=? AND subscription=?";
     $stmt = mysqli_prepare($con, $sql);
@@ -44,6 +46,21 @@ if (mysqli_fetch_row($result)) {
     mysqli_stmt_bind_param($stmt, 'ii', $author, $subscriber);
 
     if (mysqli_stmt_execute($stmt)) {
+
+        if (!$isSubscribe) {
+            $target_email = [];
+            array_push($target_email, $user['email']);
+
+            echo $body = 'Здравствуйте, '
+                . $user['login'] . ' на вас подписался новый пользователь '
+                . $_SESSION['login'] . '. Вот ссылка на ссылка на его профиль ' . $_SERVER['SERVER_NAME']
+                . '/profile.php?id=' . $_SESSION['user_id'];
+
+           echo $subject = 'У вас новый подписчик.';
+
+            send_mail($target_email, $body, $subject);
+        }
+
         header('Location:' . $_SERVER['HTTP_REFERER'] ?? 'index.php');
         exit();
     } else {
@@ -56,7 +73,3 @@ if (mysqli_fetch_row($result)) {
     header('Location:' . $_SERVER['HTTP_REFERER'] ?? 'index.php');
     exit();
 }
-
-
-
-

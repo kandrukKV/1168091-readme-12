@@ -72,4 +72,5 @@ print (include_template('layout.php', [
     'content' => $content,
     'user_name' => $_SESSION['login'],
     'header_type' => 'post',
+    'all_msg_count' => get_count_my_massages($con, $user_id)
 ]));
