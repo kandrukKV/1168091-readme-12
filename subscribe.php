@@ -1,7 +1,8 @@
 <?php
-require_once 'vendor/autoload.php';
+
 include_once ('helpers.php');
 include_once ('functions.php');
+include_once ('mail.php');
 
 session_start();
 if (!isset($_SESSION['user_id'])) {
@@ -53,12 +54,18 @@ if ($user) {
 
             $body = 'Здравствуйте, '
                 . $user['login'] . ' на вас подписался новый пользователь '
-                . $_SESSION['login'] . '. Вот ссылка на ссылка на его профиль ' . $_SERVER['SERVER_NAME']
+                . $_SESSION['login'] . '. Вот ссылка на его профиль '
+                . $_SESSION['REQUEST_SCHEME']
                 . '/profile.php?id=' . $_SESSION['user_id'];
 
             $subject = 'У вас новый подписчик.';
 
-            send_mail($target_email, $body, $subject);
+            $message = (new Swift_Message($subject))
+                ->setFrom(['7d559571f8-35eba0@inbox.mailtrap.io' => 'readme: оповещение'])
+                ->setTo($target_email)
+                ->setBody($body);
+
+            $mailer->send($message);
         }
 
         header('Location:' . $_SERVER['HTTP_REFERER'] ?? 'index.php');

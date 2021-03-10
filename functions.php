@@ -511,20 +511,3 @@ function send_message ($con, $content, $sender, $recipient)
     mysqli_stmt_bind_param($stmt, 'sii',  $content, $sender,  $recipient);
     return mysqli_stmt_execute($stmt);
 }
-
-function send_mail ($target_email, $body, $subject)
-{
-
-    $transport = (new Swift_SmtpTransport('phpdemo.ru', '25'))
-        ->setUsername('keks@phpdemo.ru')
-        ->setPassword('htmlacademy');
-
-    $mailer = new Swift_Mailer($transport);
-
-    $message = (new Swift_Message($subject))
-        ->setFrom(['keks@phpdemo.ru' => 'readme: оповещение'])
-        ->setTo($target_email)
-        ->setBody($body);
-
-    return $mailer->send($message);
-}
