@@ -55,8 +55,7 @@ if ($user) {
             $body = 'Здравствуйте, '
                 . $user['login'] . ' на вас подписался новый пользователь '
                 . $_SESSION['login'] . '. Вот ссылка на его профиль '
-                . $_SERVER['REQUEST_SCHEME']
-                . '://'
+                . 'http://'
                 . $_SERVER['SERVER_NAME']
                 . '/profile.php?id=' . $_SESSION['user_id'];
 
