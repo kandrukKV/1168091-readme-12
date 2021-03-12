@@ -174,7 +174,9 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
                 $body = 'Здравствуйте, ' . $subscriber['login'] . '. Пользователь '
                     . $_SESSION['login'] . ' только что опубликовал новую запись ' . $_POST['title']
                     . '. Посмотрите её на странице пользователя '
-                    . $_SESSION['REQUEST_SCHEME']
+                    . $_SERVER['REQUEST_SCHEME']
+                    . '://'
+                    . $_SERVER['SERVER_NAME']
                     . '/profile.php?id=' . $_SESSION['user_id'] . '.';
 
                 $subject = 'Новая публикация от пользователя ' . $_SESSION['login'] ;

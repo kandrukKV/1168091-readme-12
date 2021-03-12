@@ -55,7 +55,9 @@ if ($user) {
             $body = 'Здравствуйте, '
                 . $user['login'] . ' на вас подписался новый пользователь '
                 . $_SESSION['login'] . '. Вот ссылка на его профиль '
-                . $_SESSION['REQUEST_SCHEME']
+                . $_SERVER['REQUEST_SCHEME']
+                . '://'
+                . $_SERVER['SERVER_NAME']
                 . '/profile.php?id=' . $_SESSION['user_id'];
 
             $subject = 'У вас новый подписчик.';
