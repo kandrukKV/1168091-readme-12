@@ -6,9 +6,13 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+$user_id = $_SESSION['user_id'];
+
 include_once ('functions.php');
 include_once ('helpers.php');
+include_once ('mail.php');
 
+$add_result = null;
 
 $con = connect_to_database();
 
@@ -18,7 +22,23 @@ $result = mysqli_query($con, $sql);
 
 $content_types = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 
-$current_tab = $_POST['content_type'] ?? 'photo';
+$current_tab = $_GET['tab'] ?? 'photo';
+
+$is_correct_current_tab = false;
+
+for ($i = 0; $i < count($content_types); $i++) {
+    if ($content_types[$i]['class_name'] === $current_tab) {
+        $is_correct_current_tab = true;
+        break;
+    }
+}
+
+if (!$is_correct_current_tab) {
+    echo "Страница не найдена";
+    http_response_code(404);
+    exit();
+}
+
 
 $errors = [];
 
@@ -139,6 +159,36 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
                 add_tags($con, $tags, $last_index);
             }
 
+            $sql = 'SELECT u.email, u.login FROM subscribers sc JOIN users u ON sc.author = u.id WHERE sc.subscription = ?';
+            $stmt = mysqli_prepare($con, $sql);
+            mysqli_stmt_bind_param($stmt, 'i', $user_id);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+            $subscribers = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+
+            foreach ($subscribers as $subscriber) {
+                $target_email = [];
+
+                array_push($target_email, $subscriber['email']);
+
+                $body = 'Здравствуйте, ' . $subscriber['login'] . '. Пользователь '
+                    . $_SESSION['login'] . ' только что опубликовал новую запись ' . $_POST['title']
+                    . '. Посмотрите её на странице пользователя '
+                    . 'http://'
+                    . $_SERVER['SERVER_NAME']
+                    . '/profile.php?id=' . $_SESSION['user_id'] . '.';
+
+                $subject = 'Новая публикация от пользователя ' . $_SESSION['login'] ;
+
+                $message = (new Swift_Message($subject))
+                    ->setFrom(['7d559571f8-35eba0@inbox.mailtrap.io' => 'readme: оповещение'])
+                    ->setTo($target_email)
+                    ->setBody($body);
+
+                $mailer->send($message);
+
+            }
+
             header('Location:' . 'post.php?id=' . $last_index);
             exit();
         }
@@ -156,6 +206,7 @@ print (include_template('layout.php', [
         'content' => $content,
         'user_name' => $_SESSION['login'],
         'user_id' => $_SESSION['user_id'],
-        'header_type' => 'add_post'
+        'header_type' => 'add_post',
+        'all_msg_count' => get_count_my_massages($con, $user_id)
     ]
 ));

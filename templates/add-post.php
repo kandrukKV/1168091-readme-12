@@ -9,7 +9,12 @@
                     <ul class="adding-post__tabs-list filters__list tabs__list">
                         <?php foreach ($content_types as $content_type): ?>
                             <li class="adding-post__tabs-item filters__item">
-                                <a class="adding-post__tabs-link filters__button filters__button--<?= $content_type['class_name'] ?> tabs__item button <?= $content_type['class_name'] === $current_tab ? 'filters__button--active tabs__item--active' : '' ?>">
+                                <a class="
+                                adding-post__tabs-link filters__button
+                                filters__button--<?= $content_type['class_name'] ?>
+                                tabs__item button
+                                <?= $content_type['class_name'] === $current_tab ? 'filters__button--active tabs__item--active' : '' ?>"
+                                href="add.php?tab=<?= $content_type['class_name'] ?>">
                                     <svg class="filters__icon" width="22" height="18">
                                         <use xlink:href="#icon-filter-photo"></use>
                                     </svg>
@@ -24,7 +29,7 @@
                     <section class="adding-post__photo tabs__content<?= $current_tab === $content_type['class_name'] ? ' tabs__content--active' : ''?>">
                         <h2 class="visually-hidden">Форма добавления <?= $content_type['type_name'] ?></h2>
                         <form class="adding-post__form form"
-                              action="add.php"
+                              action="add.php?tab=<?= $current_tab ?>"
                               method="post"<?= $content_type['class_name'] === 'photo' || $content_type['class_name'] === 'video' ? ' enctype="multipart/form-data"' : ''?>>
                             <input type="hidden" name="content_type" value="<?= $content_type['class_name']?>">
                             <div class="form__text-inputs-wrapper">

@@ -19,8 +19,8 @@ window.util = {
           }
         }, s = function (t, e) {
           t.addEventListener("click", function (t) {
-            t.preventDefault();
-            a(e)
+            // t.preventDefault();
+            // a(e)
           })
         }, a = function (t) {
           if (t !== c) {

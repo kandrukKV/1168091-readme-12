@@ -6,6 +6,8 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+$user_id = $_SESSION['user_id'];
+
 include_once ('helpers.php');
 include_once ('functions.php');
 
@@ -102,4 +104,5 @@ print (include_template('layout.php', [
     'user_name' => $_SESSION['login'],
     'user_id' => $_SESSION['user_id'],
     'header_type' => 'search',
+    'all_msg_count' => get_count_my_massages($con, $user_id)
 ]));
