@@ -13,6 +13,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 
 include_once ('helpers.php');
 include_once ('functions.php');
+include('sql-requests.php');
 
 $user_id = $_SESSION['user_id'];
 $post_id = $_GET['id'];
@@ -41,19 +42,19 @@ if ($post) {
     $original_post_id = $post['id'];
 
 
-   echo $sql = "INSERT INTO posts
+   $sql = "INSERT INTO posts
             SET
-                title = '$title',
-                content = '$content',
-                quote_author = '$quote_author',
-                picture = '$picture',
-                video = '$video',
-                link = '$link',
-                views_count = $views_count,
-                user_id = '$user_id',
-                content_type_id = '$content_type_id',
-                is_repost = 1,
-                original_post_id = ?";
+            title = '$title',
+            content = '$content',
+            quote_author = '$quote_author',
+            picture = '$picture',
+            video = '$video',
+            link = '$link',
+            views_count = $views_count,
+            user_id = '$user_id',
+            content_type_id = '$content_type_id',
+            is_repost = 1,
+            original_post_id = ?";
 
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, 'i', $post_id);

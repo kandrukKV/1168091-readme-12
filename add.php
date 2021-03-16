@@ -10,17 +10,14 @@ $user_id = $_SESSION['user_id'];
 
 include_once ('functions.php');
 include_once ('helpers.php');
+include('sql-requests.php');
 include_once ('mail.php');
 
 $add_result = null;
 
 $con = connect_to_database();
 
-$sql = "SELECT `type_name`, `class_name` FROM `content_type`";
-
-$result = mysqli_query($con, $sql);
-
-$content_types = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+$content_types = get_content_types($con);
 
 $current_tab = $_GET['tab'] ?? 'photo';
 
@@ -159,12 +156,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
                 add_tags($con, $tags, $last_index);
             }
 
-            $sql = 'SELECT u.email, u.login FROM subscribers sc JOIN users u ON sc.author = u.id WHERE sc.subscription = ?';
-            $stmt = mysqli_prepare($con, $sql);
-            mysqli_stmt_bind_param($stmt, 'i', $user_id);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
-            $subscribers = $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+            $subscribers = get_subscribers($con, $user_id);
 
             foreach ($subscribers as $subscriber) {
                 $target_email = [];

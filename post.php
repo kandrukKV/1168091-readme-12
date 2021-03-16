@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 
 include_once ('functions.php');
 include_once ('helpers.php');
+include('sql-requests.php');
 
 if (!isset($_GET['id'])) {
     echo "Страница не найдена";
@@ -19,33 +20,7 @@ $post_id = $_GET['id'];
 
 $con = connect_to_database();
 
-$sql = "
-    SELECT
-           p.id,
-           p.datetime,
-           p.title,
-           p.content,
-           p.link,
-           p.views_count,
-           p.user_id,
-           p.quote_author,
-           p.views_count,
-           u.login,
-           u.avatar,
-           u.datetime as user_datetime,
-           c_t.class_name,
-           (SELECT count(*) FROM likes WHERE post_id = p.id) AS likes_count,
-           (SELECT count(*) FROM comments WHERE post_id = p.id) AS comments_count
-    FROM posts p
-    JOIN users u ON p.user_id = u.id
-    JOIN content_type c_t ON p.content_type_id = c_t.id
-    WHERE p.id = ?";
-
-$stmt = mysqli_prepare($con, $sql);
-mysqli_stmt_bind_param($stmt, 'i', $post_id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$post_details = mysqli_fetch_array($result, MYSQLI_ASSOC);
+$post_details = get_post_by_id($con, $post_id);
 
 if (!$post_details) {
     echo "Страница не найдена";

@@ -8,6 +8,7 @@ if (isset($_SESSION['user_id'])) {
 
 include_once ('helpers.php');
 include_once ('functions.php');
+include('sql-requests.php');
 
 $errors = [];
 
@@ -31,12 +32,8 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
     }
 
     if (count($errors) === 0) {
-        $sql = "SELECT `id`, `pass`, `login`, `avatar` FROM `users` WHERE `email` = ?";
-        $stmt = mysqli_prepare($con, $sql);
-        mysqli_stmt_bind_param($stmt, 's', $_POST['email']);
-        mysqli_stmt_execute($stmt);
-        $res = mysqli_stmt_get_result($stmt);
-        $user_data = mysqli_fetch_assoc($res);
+
+        $user_data = get_user_by_email($con, $_POST['email']);
         $passwordHash = $user_data['pass'];
 
         if (password_verify($_POST['password'], $passwordHash)) {

@@ -1,6 +1,7 @@
 <?php
 include_once ('helpers.php');
 include_once ('functions.php');
+include('sql-requests.php');
 
 session_start();
 if (!isset($_SESSION['user_id'])) {
@@ -18,19 +19,9 @@ $con = connect_to_database();
 $post_id = $_GET['id'];
 $user_id = $_SESSION['user_id'];
 
-$sql = "SELECT * FROM posts WHERE id = ?";
+if (is_there_post_with_id($con, $post_id) && !is_like($con, $post_id, $user_id)) {
 
-$stmt = mysqli_prepare($con, $sql);
-mysqli_stmt_bind_param($stmt, 'i', $post_id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-
-if (mysqli_fetch_row($result) && !is_like($con, $post_id, $user_id)) {
-    $sql = "INSERT INTO likes (user_id, post_id) VALUES (?, ?)";
-    $stmt = mysqli_prepare($con, $sql);
-    mysqli_stmt_bind_param($stmt, 'ii', $user_id, $post_id);
-
-    if (mysqli_stmt_execute($stmt)) {
+    if (add_like($con, $user_id, $post_id)) {
         header('Location:' . $_SERVER['HTTP_REFERER'] ?? 'index.php');
         exit();
     } else {

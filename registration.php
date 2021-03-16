@@ -8,6 +8,7 @@ if (isset($_SESSION['user_id'])) {
 
 include_once ('helpers.php');
 include_once ('functions.php');
+include('sql-requests.php');
 
 $form_fields = [
     'email' => [

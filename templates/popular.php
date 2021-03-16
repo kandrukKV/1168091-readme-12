@@ -85,7 +85,7 @@ $p_page = isset($page) ? '&page=' . $page : '';
 
                                 <?php if($post['content'] !== $result): ?>
                                 <div class="post-text__more-link-wrapper">
-                                    <a class="post-text__more-link" href="#">Читать далее</a>
+                                    <a class="post-text__more-link" href="/post.php?id=<?= $post['id'] ?>">Читать далее</a>
                                 </div>
                             <?php endif; ?>
 

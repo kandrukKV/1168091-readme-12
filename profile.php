@@ -17,6 +17,7 @@ if ($current_tab !== 'posts' && $current_tab !== 'likes' && $current_tab !== 'su
 
 include_once ('helpers.php');
 include_once ('functions.php');
+include('sql-requests.php');
 
 $con = connect_to_database();
 
@@ -44,7 +45,7 @@ switch ($current_tab) {
         $posts = get_likes_of_user($con, $user_id);
         break;
     case 'subscribers':
-        $posts = get_subscribers($con, $user_id);
+        $posts = get_subscriptions($con, $user_id);
         for ($i = 0; $i < count($posts); $i++) {
             $posts[$i]['is_subscribe'] = is_subscribe($con, $_SESSION['user_id'], $posts[$i]['sub_id']);
         }
