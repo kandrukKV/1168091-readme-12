@@ -20,46 +20,13 @@ $post_id = $_GET['id'];
 
 $con = connect_to_database();
 
-$sql = "SELECT * FROM posts WHERE id = ?";
-
-$stmt = mysqli_prepare($con, $sql);
-mysqli_stmt_bind_param($stmt, 'i', $post_id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-
-$post = mysqli_fetch_assoc($result);
+$post = get_all_fields_from_posts_by_id($con, $post_id);
 
 if ($post) {
-    $title = $post['title'];
-    $content = $post['content'];
-    $quote_author = $post['quote_author'];
-    $picture = $post['picture'];
-    $video = $post['video'];
-    $link = $post['link'];
-    $views_count = $post['views_count'];
-    $content_type_id = $post['content_type_id'];
-    $is_repost = 1;
-    $original_post_id = $post['id'];
 
+    $result = make_repost($con, $user_id, $post);
 
-   $sql = "INSERT INTO posts
-            SET
-            title = '$title',
-            content = '$content',
-            quote_author = '$quote_author',
-            picture = '$picture',
-            video = '$video',
-            link = '$link',
-            views_count = $views_count,
-            user_id = '$user_id',
-            content_type_id = '$content_type_id',
-            is_repost = 1,
-            original_post_id = ?";
-
-    $stmt = mysqli_prepare($con, $sql);
-    mysqli_stmt_bind_param($stmt, 'i', $post_id);
-
-    if (!mysqli_stmt_execute($stmt)) {
+    if (!$result) {
         echo "Ошибка сервера";
         http_response_code(500);
         exit();

@@ -666,3 +666,45 @@ function get_found_posts ($con, $search_request)
     $result = mysqli_stmt_get_result($stmt);
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
+
+function get_all_fields_from_posts_by_id ($con, $post_id)
+{
+    $sql = "SELECT * FROM posts WHERE id = ?";
+
+    $stmt = db_get_prepare_stmt($con, $sql, [$post_id]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    return mysqli_fetch_assoc($result);
+}
+
+function make_repost ($con, $user_id, $post)
+{
+    $title = $post['title'];
+    $content = $post['content'];
+    $quote_author = $post['quote_author'];
+    $picture = $post['picture'];
+    $video = $post['video'];
+    $link = $post['link'];
+    $views_count = $post['views_count'];
+    $content_type_id = $post['content_type_id'];
+    $original_post_id = $post['id'];
+
+    $sql = "INSERT INTO posts
+            SET
+            title = '$title',
+            content = '$content',
+            quote_author = '$quote_author',
+            picture = '$picture',
+            video = '$video',
+            link = '$link',
+            views_count = $views_count,
+            user_id = '$user_id',
+            content_type_id = '$content_type_id',
+            is_repost = 1,
+            original_post_id = ?";
+
+    $stmt = db_get_prepare_stmt($con, $sql, [$original_post_id]);
+
+    return mysqli_stmt_execute($stmt);
+}
