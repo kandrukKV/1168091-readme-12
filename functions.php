@@ -1,11 +1,13 @@
 <?php
 
-function vardump($var)
-{
-    echo '<pre>';
-    var_dump($var);
-    echo '</pre>';
-}
+/**
+ * Обрезает текст
+ *
+ * @param string $text  текст
+ * @param int $text_limit максимальное количество символов
+ *
+ * @return string
+ */
 
 function crop_text($text, $text_limit = 300)
 {
@@ -33,9 +35,16 @@ function crop_text($text, $text_limit = 300)
     return implode(' ', $temp) . '...';
 }
 
+/**
+ * Возвращает в текстовом виде количество времени которое прошло с момента $time
+ *
+ * @param string $time дата и время
+ *
+ * @return string
+ */
+
 function get_how_much_time($time)
 {
-
     $diffTime = time() - strtotime($time);
 
     $diffMinutes = floor($diffTime / 60);
@@ -67,10 +76,27 @@ function get_how_much_time($time)
     return $diffMounts . get_noun_plural_form($diffMounts, ' месяц', ' месяца', ' месяцев');
 }
 
+/**
+ * Возврашает поле из массива $_POST
+ *
+ * @param string $name  название поля
+ *
+ * @return string | int | bool
+ */
+
 function get_post_val($name)
 {
     return $_POST[$name] ?? "";
 }
+
+/**
+ * Возврашает массив хештегов и валидирует их
+ *
+ * @param string $str  строка с хештегами
+ *
+ * @return array | false
+ */
+
 
 function hash_tags_validation($str)
 {
@@ -83,7 +109,16 @@ function hash_tags_validation($str)
     return $tags;
 }
 
-function get_post_template ($post)
+/**
+ * Возвращает html разметку поста в зависимости от его типа
+ *
+ * @param array $post  строка из таблицы posts
+ *
+ * @return string
+ */
+
+
+function get_post_template($post)
 {
     switch ($post['class_name']) {
         case 'text':

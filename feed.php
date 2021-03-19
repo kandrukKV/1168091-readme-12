@@ -6,8 +6,8 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-include_once ('helpers.php');
-include_once ('functions.php');
+include_once('helpers.php');
+include_once('functions.php');
 include('sql-requests.php');
 
 $con = connect_to_database();

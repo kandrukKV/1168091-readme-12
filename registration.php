@@ -6,8 +6,8 @@ if (isset($_SESSION['user_id'])) {
     exit();
 }
 
-include_once ('helpers.php');
-include_once ('functions.php');
+include_once('helpers.php');
+include_once('functions.php');
 include('sql-requests.php');
 
 $form_fields = [
@@ -37,18 +37,18 @@ $con = connect_to_database();
 
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD']=='POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (empty($_POST['email'])) {
         $errors['email'] = 'Email. Это поле не должно быть пустым.';
     } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Email. Неверный формат электронного адреса.';
     } else {
-         $res = checkEmail($con, $_POST['email']);
+        $res = checkEmail($con, $_POST['email']);
 
-         if (mysqli_num_rows($res) > 0) {
-             $errors['email'] = 'Email. Такой адрес уже был зарегистрирован.';
-         }
+        if (mysqli_num_rows($res) > 0) {
+            $errors['email'] = 'Email. Такой адрес уже был зарегистрирован.';
+        }
     }
 
     if (empty($_POST['login'])) {
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
     }
 
     if (!empty($_POST['password-repeat']) && !empty($_POST['password'])) {
-        if($_POST['password-repeat'] !== $_POST['password']) {
+        if ($_POST['password-repeat'] !== $_POST['password']) {
             $errors['password-repeat'] = 'Повтор пароля. Пароли не совпадают.';
         }
     }
@@ -90,7 +90,8 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
             $file_is_saved = move_uploaded_file($_FILES['userpic-file']['tmp_name'], $file_path . $file_name);
         }
 
-        $add_user = add_user($con, $_POST['email'], $_POST['login'], $_POST['password'], $file_is_saved ? $file_name : null);
+        $add_user = add_user($con, $_POST['email'], $_POST['login'], $_POST['password'],
+            $file_is_saved ? $file_name : null);
 
         if ($add_user) {
             $last_index = mysqli_insert_id($con);

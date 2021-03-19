@@ -6,8 +6,8 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-include_once ('functions.php');
-include_once ('helpers.php');
+include_once('functions.php');
+include_once('helpers.php');
 include('sql-requests.php');
 
 if (!isset($_GET['id'])) {
@@ -43,7 +43,7 @@ $post_details['is_like'] = is_like($con, $post_id, $_SESSION['user_id']);
 
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD']=='POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($_POST['content'])) {
         $errors['content'] = 'Это поле обязательно для заполнения';
     } elseif (mb_strlen($_POST['content']) <= 4) {

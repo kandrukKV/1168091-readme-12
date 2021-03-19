@@ -8,10 +8,10 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-include_once ('functions.php');
-include_once ('helpers.php');
+include_once('functions.php');
+include_once('helpers.php');
 include('sql-requests.php');
-include_once ('mail.php');
+include_once('mail.php');
 
 $add_result = null;
 
@@ -39,7 +39,7 @@ if (!$is_correct_current_tab) {
 
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD']=='POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (empty($_POST['title'])) {
         $errors['title'] = 'Заголовок. Это поле должно быть заполнено.';
@@ -145,7 +145,8 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
                 $errors['content'] = 'Ошибка записи файла';
             }
         } else {
-            $add_result = add_post($con, $_POST['title'], $_POST['content'], $_POST['author'] ?? null, $current_tab, $_SESSION['user_id']);
+            $add_result = add_post($con, $_POST['title'], $_POST['content'], $_POST['author'] ?? null, $current_tab,
+                $_SESSION['user_id']);
         }
 
 
@@ -170,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
                     . $_SERVER['SERVER_NAME']
                     . '/profile.php?id=' . $_SESSION['user_id'] . '.';
 
-                $subject = 'Новая публикация от пользователя ' . $_SESSION['login'] ;
+                $subject = 'Новая публикация от пользователя ' . $_SESSION['login'];
 
                 $message = (new Swift_Message($subject))
                     ->setFrom(['7d559571f8-35eba0@inbox.mailtrap.io' => 'readme: оповещение'])

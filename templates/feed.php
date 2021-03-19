@@ -13,22 +13,23 @@
             <ul class="feed__filters filters">
 
                 <li class="feed__filters-item filters__item">
-                    <a class="filters__button<?= $current_content_type_id === 'all' ? ' filters__button--active' : '' ?>" href="/feed.php">
+                    <a class="filters__button<?= $current_content_type_id === 'all' ? ' filters__button--active' : '' ?>"
+                       href="/feed.php">
                         <span>Все</span>
                     </a>
                 </li>
 
                 <?php foreach ($content_types as $content_type) : ?>
                     <li class="feed__filters-item filters__item">
-                        <a class="filters__button filters__button--<?= $content_type['class_name'] ?> button<?= $current_content_type_id === $content_type['id'] ? ' filters__button--active' : '' ?>" href="/feed.php?content_type=<?= $content_type['id']?>">
-                            <span class="visually-hidden"><?= $content_type['type_name']?></span>
+                        <a class="filters__button filters__button--<?= $content_type['class_name'] ?> button<?= $current_content_type_id === $content_type['id'] ? ' filters__button--active' : '' ?>"
+                           href="/feed.php?content_type=<?= $content_type['id'] ?>">
+                            <span class="visually-hidden"><?= $content_type['type_name'] ?></span>
                             <svg class="filters__icon" width="22" height="18">
                                 <use xlink:href="#icon-filter-<?= $content_type['class_name'] ?>"></use>
                             </svg>
                         </a>
                     </li>
-                <?php endforeach;?>
-
+                <?php endforeach; ?>
 
 
             </ul>

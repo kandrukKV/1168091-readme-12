@@ -15,8 +15,8 @@ if ($current_tab !== 'posts' && $current_tab !== 'likes' && $current_tab !== 'su
     exit();
 }
 
-include_once ('helpers.php');
-include_once ('functions.php');
+include_once('helpers.php');
+include_once('functions.php');
 include('sql-requests.php');
 
 $con = connect_to_database();

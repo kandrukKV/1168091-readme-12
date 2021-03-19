@@ -11,8 +11,8 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
     exit();
 }
 
-include_once ('helpers.php');
-include_once ('functions.php');
+include_once('helpers.php');
+include_once('functions.php');
 include('sql-requests.php');
 
 $user_id = $_SESSION['user_id'];

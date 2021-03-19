@@ -1,12 +1,12 @@
 {
-    "name": "readme/readme",
-    "authors": [
-        {
-            "name": "Konstantin",
-            "email": "kandruk@ya.ru"
-        }
-    ],
-    "require": {
-        "swiftmailer/swiftmailer": "^6.2"
+  "name": "readme/readme",
+  "authors": [
+    {
+      "name": "Konstantin",
+      "email": "kandruk@ya.ru"
     }
+  ],
+  "require": {
+    "swiftmailer/swiftmailer": "^6.2"
+  }
 }

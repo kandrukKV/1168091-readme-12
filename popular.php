@@ -8,8 +8,8 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-include_once ('functions.php');
-include_once ('helpers.php');
+include_once('functions.php');
+include_once('helpers.php');
 include('sql-requests.php');
 
 $con = connect_to_database();

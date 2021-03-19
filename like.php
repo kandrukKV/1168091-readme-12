@@ -1,6 +1,6 @@
 <?php
-include_once ('helpers.php');
-include_once ('functions.php');
+include_once('helpers.php');
+include_once('functions.php');
 include('sql-requests.php');
 
 session_start();

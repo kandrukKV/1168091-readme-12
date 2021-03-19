@@ -8,15 +8,15 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-include_once ('helpers.php');
-include_once ('functions.php');
+include_once('helpers.php');
+include_once('functions.php');
 include('sql-requests.php');
 
 $con = connect_to_database();
 
 $search_results = [];
 
-if ($_SERVER['REQUEST_METHOD']=='GET' && isset($_GET['search_request'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['search_request'])) {
 
     $search_request = trim($_GET['search_request']);
 
@@ -33,7 +33,6 @@ $all_posts = include_template('posts.php', [
     'posts' => $search_results,
     'post_type' => 'feed'
 ]);
-
 
 
 if (count($search_results) > 0) {

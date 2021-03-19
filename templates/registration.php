@@ -8,26 +8,30 @@
             <div class="form__text-inputs-wrapper">
                 <div class="form__text-inputs">
                     <?php foreach ($form_fields as $key => $value) : ?>
-                    <div class="registration__input-wrapper form__input-wrapper">
-                        <label class="registration__label form__label" for="registration-<?= $key ?>"><?= $value['label'] ?> <span class="form__input-required">*</span></label>
-                        <div class="form__input-section<?= isset($errors[$key]) ? ' form__input-section--error' : ''?>">
-                            <input
-                                class="registration__input form__input"
-                                id="registration-<?= $key ?>"
-                                type="<?= $value['type'] ?>"
-                                name="<?= $key ?>"
-                                placeholder="<?= $value['placeholder'] ?>"
-                                value="<?= get_post_val($key)?>">
+                        <div class="registration__input-wrapper form__input-wrapper">
+                            <label class="registration__label form__label"
+                                   for="registration-<?= $key ?>"><?= $value['label'] ?> <span
+                                    class="form__input-required">*</span></label>
+                            <div
+                                class="form__input-section<?= isset($errors[$key]) ? ' form__input-section--error' : '' ?>">
+                                <input
+                                    class="registration__input form__input"
+                                    id="registration-<?= $key ?>"
+                                    type="<?= $value['type'] ?>"
+                                    name="<?= $key ?>"
+                                    placeholder="<?= $value['placeholder'] ?>"
+                                    value="<?= get_post_val($key) ?>">
 
-                            <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
-                            <?php if (isset($error[$key])) : ?>
-                                <div class="form__error-text">
-                                    <h3 class="form__error-title">Заголовок сообщения</h3>
-                                    <p class="form__error-desc"><?= $error[$key] ?></p>
-                                </div>
-                            <?php endif; ?>
+                                <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
+                                </button>
+                                <?php if (isset($error[$key])) : ?>
+                                    <div class="form__error-text">
+                                        <h3 class="form__error-title">Заголовок сообщения</h3>
+                                        <p class="form__error-desc"><?= $error[$key] ?></p>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                    </div>
                     <?php endforeach; ?>
                 </div>
 
@@ -46,7 +50,8 @@
             <div class="registration__input-file-container form__input-container form__input-container--file">
                 <div class="registration__input-file-wrapper form__input-file-wrapper">
                     <div class="registration__file-zone form__file-zone dropzone">
-                        <input class="registration__input-file form__input-file" id="userpic-file" type="file" name="userpic-file" title="">
+                        <input class="registration__input-file form__input-file" id="userpic-file" type="file"
+                               name="userpic-file" title="">
                         <div class="form__file-zone-text">
                             <span>Перетащите фото сюда</span>
                         </div>

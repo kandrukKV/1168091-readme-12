@@ -1,8 +1,16 @@
 <?php
 
-function connect_to_database ()
+/**
+ * Производит соединение с базой данных
+ * либо в случае неудачного соединения выдает ошибку 500
+ *
+ * @return object | false Возвращает объект, представляющий подключение к серверу MySQL, или
+ * false в случае возникновения ошибки.
+ */
+
+function connect_to_database()
 {
-    $con = mysqli_connect("localhost", "root", "","readme");
+    $con = mysqli_connect("localhost", "root", "", "readme");
 
     if (!$con) {
         echo "Ошибка подключения к базе данных";
@@ -24,6 +32,7 @@ function connect_to_database ()
  *
  * @return mysqli_stmt Подготовленное выражение
  */
+
 function db_get_prepare_stmt($link, $sql, $data = [])
 {
     $stmt = mysqli_prepare($link, $sql);
@@ -72,9 +81,18 @@ function db_get_prepare_stmt($link, $sql, $data = [])
     return $stmt;
 }
 
-function add_tags ($con, $tags, $post_id)
-{
+/**
+ * Добавляет хештеги в базу данных для определенного поста
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param array $tags массив с хештегами
+ * @param int | string $post_id идентификатор поста
+ *
+ * @return void
+ */
 
+function add_tags($con, $tags, $post_id)
+{
     $tmp = implode(', ', array_map(function ($item) {
         return "'" . $item . "'";
     }, $tags));
@@ -115,7 +133,20 @@ function add_tags ($con, $tags, $post_id)
     }
 }
 
-function add_post ($con, $title, $content, $author, $content_type, $user_id)
+/**
+ * Добавляет новый пост в базу данных
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string $title заголовок поста
+ * @param string $content содержимое поста
+ * @param string | null $author автор поста
+ * @param string $content_type тип поста
+ * @param int | string $user_id идентификатор пользователя
+ *
+ * @return true | false
+ */
+
+function add_post($con, $title, $content, $author, $content_type, $user_id)
 {
     $sql = "SELECT `id` FROM `content_type` WHERE `class_name` = '$content_type'";
 
@@ -133,7 +164,19 @@ function add_post ($con, $title, $content, $author, $content_type, $user_id)
     return mysqli_stmt_execute($stmt);
 }
 
-function add_user ($con, $email, $login, $pass, $avatar)
+/**
+ * Добавляет нового пользователя в базу данных
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string $email email пользователя
+ * @param string $login логин пользователя
+ * @param string $pass пароль пользователя
+ * @param string | null $avatar автор поста
+ *
+ * @return true | false
+ */
+
+function add_user($con, $email, $login, $pass, $avatar)
 {
     $passwordHash = password_hash($pass, PASSWORD_DEFAULT);
     $sql = "INSERT INTO `users` (`email`, `pass`, `login`, `avatar`) VALUES (?, ?, ?, ?)";
@@ -142,7 +185,16 @@ function add_user ($con, $email, $login, $pass, $avatar)
     return mysqli_stmt_execute($stmt);
 }
 
-function add_view ($con, $post_id)
+/**
+ * Увеличивает счетчик просмотров поста на единицу
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string $post_id идентификатор поста
+ *
+ * @return true | false
+ */
+
+function add_view($con, $post_id)
 {
     $sql = "UPDATE `posts` SET `views_count` = `views_count` + 1 WHERE id = ?";
     $stmt = db_get_prepare_stmt($con, $sql, [$post_id]);
@@ -150,20 +202,51 @@ function add_view ($con, $post_id)
     return mysqli_stmt_execute($stmt);
 }
 
-function add_comment ($con, $content, $user_id, $post_id)
+/**
+ * Добавляет новый комметарий базу данных
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string $content текст комменария
+ * @param string | int $user_id идентификатор пользователя
+ * @param string | int $post_id идентификатор поста
+ *
+ * @return true | false
+ */
+
+function add_comment($con, $content, $user_id, $post_id)
 {
     $sql = "INSERT INTO `comments` (`content`, `user_id`, `post_id`) VALUES (?, ?, ?)";
-    $stmt = db_get_prepare_stmt($con, $sql, [$content,$user_id, $post_id]);
+    $stmt = db_get_prepare_stmt($con, $sql, [$content, $user_id, $post_id]);
     return mysqli_stmt_execute($stmt);
 }
 
-function add_like ($con, $user_id, $post_id) {
+/**
+ * Добавляет лайк посту
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $user_id идентификатор пользователя
+ * @param string | int $post_id идентификатор поста
+ *
+ * @return true | false
+ */
+
+function add_like($con, $user_id, $post_id)
+{
     $sql = "INSERT INTO likes (user_id, post_id) VALUES (?, ?)";
     $stmt = db_get_prepare_stmt($con, $sql, [$user_id, $post_id]);
     return mysqli_stmt_execute($stmt);
 }
 
-function checkEmail ($con, $email)
+/**
+ * Проверяет наличие email в базе данных
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string $email текст комменария
+ *
+ * @return true | false
+ */
+
+function checkEmail($con, $email)
 {
     $sql = "SELECT `email` FROM `users` WHERE `email` = ?";
     $stmt = db_get_prepare_stmt($con, $sql, [$email]);
@@ -171,7 +254,16 @@ function checkEmail ($con, $email)
     return mysqli_stmt_get_result($stmt);
 }
 
-function content_type_id_is_correct ($con, $content_type_id)
+/**
+ * Проверяет есть ли в базе данных запрашиваемый идентификатор типа контента
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $user_id идентификатор типа контента
+ *
+ * @return true | false
+ */
+
+function content_type_id_is_correct($con, $content_type_id)
 {
     $sql = "SELECT * FROM content_type WHERE id = ?";
 
@@ -182,7 +274,18 @@ function content_type_id_is_correct ($con, $content_type_id)
     return mysqli_fetch_array($result, MYSQLI_ASSOC);
 }
 
-function is_like ($con, $post_id, $user_id) {
+/**
+ * Проверяет наличие лайка к посту от данного пользователя
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $user_id идентификатор пользователя
+ * @param string | int $post_id идентификатор поста
+ *
+ * @return true | false
+ */
+
+function is_like($con, $post_id, $user_id)
+{
     $sql = "SELECT * FROM likes WHERE post_id = ? AND user_id = ?";
     $stmt = db_get_prepare_stmt($con, $sql, [$post_id, $user_id]);
     mysqli_stmt_execute($stmt);
@@ -190,7 +293,17 @@ function is_like ($con, $post_id, $user_id) {
     return mysqli_num_rows($result);
 }
 
-function is_there_post_with_id ($con, $post_id) {
+/**
+ * Проверяет наличие в базе данных поста с данным идентификатором
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $post_id идентификатор поста
+ *
+ * @return true | false
+ */
+
+function is_there_post_with_id($con, $post_id)
+{
     $sql = "SELECT * FROM posts WHERE id = ?";
 
     $stmt = db_get_prepare_stmt($con, $sql, [$post_id]);
@@ -201,7 +314,17 @@ function is_there_post_with_id ($con, $post_id) {
     return mysqli_fetch_row($result);
 }
 
-function is_subscribe ($con, $user_one, $user_two)
+/**
+ * Проверяет наличие полписки одного пользователя на другого
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $user_one идентификатор пользователя
+ * @param string | int $user_two идентификатор пользователя
+ *
+ * @return true | false
+ */
+
+function is_subscribe($con, $user_one, $user_two)
 {
     $sql = "SELECT * FROM subscribers WHERE author = ? AND subscription = ?";
     $stmt = db_get_prepare_stmt($con, $sql, [$user_one, $user_two]);
@@ -210,7 +333,16 @@ function is_subscribe ($con, $user_one, $user_two)
     return mysqli_fetch_row($result);
 }
 
-function get_user_info ($con, $user_id)
+/**
+ * Возвращает инфрмацию о пользователе из базы данных по user_id
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $user_id идентификатор пользователя
+ *
+ * @return array
+ */
+
+function get_user_info($con, $user_id)
 {
     $sql = "SELECT u.id, u.datetime, u.login, u.email, u.avatar
         FROM users u
@@ -222,7 +354,16 @@ function get_user_info ($con, $user_id)
     return mysqli_fetch_array($result, MYSQLI_ASSOC);
 }
 
-function get_user_by_email ($con, $email)
+/**
+ * Возвращает инфрмацию о пользователе из базы данных по email
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string $email email пользователя
+ *
+ * @return array
+ */
+
+function get_user_by_email($con, $email)
 {
     $sql = "SELECT `id`, `pass`, `login`, `avatar` FROM `users` WHERE `email` = ?";
     $stmt = db_get_prepare_stmt($con, $sql, [$email]);
@@ -231,7 +372,16 @@ function get_user_by_email ($con, $email)
     return mysqli_fetch_assoc($res);
 }
 
-function get_posts_of_user ($con, $user_id)
+/**
+ * Возвращает список постов пользователя
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $user_id идентификатор пользователя
+ *
+ * @return array
+ */
+
+function get_posts_of_user($con, $user_id)
 {
     $sql = "
                 SELECT
@@ -268,7 +418,16 @@ function get_posts_of_user ($con, $user_id)
     return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 }
 
-function get_post_by_id ($con, $post_id)
+/**
+ * Возвращает пост из базы данных по его идентификатору
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $post_id идентификатор пользователя
+ *
+ * @return array
+ */
+
+function get_post_by_id($con, $post_id)
 {
     $sql = "
     SELECT
@@ -298,7 +457,16 @@ function get_post_by_id ($con, $post_id)
     return mysqli_fetch_array($result, MYSQLI_ASSOC);
 }
 
-function get_tags ($con, $post_id)
+/**
+ * Возвращает список хештегов к посту
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $post_id идентификатор пользователя
+ *
+ * @return array
+ */
+
+function get_tags($con, $post_id)
 {
     $sql = "SELECT ht.tag_name FROM posts_hashtags ph JOIN hash_tags ht ON ht.id = ph.hashtag_id WHERE post_id = ?";
     $stmt = db_get_prepare_stmt($con, $sql, [$post_id]);
@@ -308,7 +476,17 @@ function get_tags ($con, $post_id)
     return $tags ? $tags : [];
 }
 
-function get_comments ($con, $post_id) {
+/**
+ * Возвращает список комметариев к посту
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $post_id идентификатор пользователя
+ *
+ * @return array
+ */
+
+function get_comments($con, $post_id)
+{
     $sql = "
         SELECT
             c.datetime,
@@ -328,7 +506,16 @@ function get_comments ($con, $post_id) {
     return $comments ? $comments : [];
 }
 
-function get_likes_of_user ($con, $user_id)
+/**
+ * Возвращает список постов, которые лайкнул пользователь
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $user_id идентификатор пользователя
+ *
+ * @return array
+ */
+
+function get_likes_of_user($con, $user_id)
 {
     $sql = "SELECT
                 p.id,
@@ -355,7 +542,16 @@ function get_likes_of_user ($con, $user_id)
     return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 }
 
-function get_subscriptions ($con, $user_id)
+/**
+ * Возвращает подписки, которые сделал пользователь
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $user_id идентификатор пользователя
+ *
+ * @return array
+ */
+
+function get_subscriptions($con, $user_id)
 {
     $sql = "
             SELECT
@@ -376,7 +572,16 @@ function get_subscriptions ($con, $user_id)
     return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 }
 
-function get_subscribers ($con, $user_id)
+/**
+ * Возвращает подписчиков пользователя
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $user_id идентификатор пользователя
+ *
+ * @return array
+ */
+
+function get_subscribers($con, $user_id)
 {
     $sql = 'SELECT u.email, u.login FROM subscribers sc JOIN users u ON sc.author = u.id WHERE sc.subscription = ?';
     $stmt = db_get_prepare_stmt($con, $sql, [$user_id]);
@@ -385,7 +590,17 @@ function get_subscribers ($con, $user_id)
     return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 }
 
-function get_user_feed ($con, $user_id, $current_content_type_id)
+/**
+ * Возвращает ленту пользователя
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $user_id идентификатор пользователя
+ * @param string | int $current_content_type_id идентификатор типа поста
+ *
+ * @return array
+ */
+
+function get_user_feed($con, $user_id, $current_content_type_id)
 {
     $sql = "
     SELECT
@@ -430,7 +645,16 @@ function get_user_feed ($con, $user_id, $current_content_type_id)
     return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 }
 
-function get_all_posts_count ($con, $content_type_id)
+/**
+ * Возвращает количество постов определенного типа в базе данных
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $content_type_id тип поста пользователя
+ *
+ * @return int
+ */
+
+function get_all_posts_count($con, $content_type_id)
 {
     if ($content_type_id) {
 
@@ -450,7 +674,20 @@ function get_all_posts_count ($con, $content_type_id)
     return count($all_posts);
 }
 
-function get_popular_posts ($con, $content_type_id, $order_sort, $order_line, $limit, $offset)
+/**
+ * Возвращает массив полулярных постов определенного типа
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $content_type_id тип поста пользователя
+ * @param string $order_sort поле в БД по которому происходит сортировка
+ * @param string $order_line направление сортировки down/up
+ * @param string $limit максимальное количество строк ответа
+ * @param string $offset смещение
+ *
+ * @return array
+ */
+
+function get_popular_posts($con, $content_type_id, $order_sort, $order_line, $limit, $offset)
 {
     $sql = "
     SELECT
@@ -472,10 +709,10 @@ function get_popular_posts ($con, $content_type_id, $order_sort, $order_line, $l
     JOIN content_type c_t ON p.content_type_id = c_t.id";
 
     if ($content_type_id) {
-        $sql .= " WHERE content_type_id = ? ORDER BY ". $order_sort . " " . $order_line . " LIMIT ? OFFSET ?";
+        $sql .= " WHERE content_type_id = ? ORDER BY " . $order_sort . " " . $order_line . " LIMIT ? OFFSET ?";
         $stmt = db_get_prepare_stmt($con, $sql, [$content_type_id, $limit, $offset]);
     } else {
-        $sql .= " ORDER BY ". $order_sort . " " . $order_line . " LIMIT ? OFFSET ?";
+        $sql .= " ORDER BY " . $order_sort . " " . $order_line . " LIMIT ? OFFSET ?";
         $stmt = db_get_prepare_stmt($con, $sql, [$limit, $offset]);
     }
 
@@ -485,7 +722,17 @@ function get_popular_posts ($con, $content_type_id, $order_sort, $order_line, $l
     return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 }
 
-function get_correspondence ($con, $member_id, $user_id)
+/**
+ * Возвращает массив сообщений между пользователями
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param int | string $member_id идентификатор оппонетнта попреписке
+ * @param int | string $user_id идентификатор текущего пользователя
+ *
+ * @return array
+ */
+
+function get_correspondence($con, $member_id, $user_id)
 {
     $sql = "SELECT ms.id as ms_id, ms.datetime, ms.content, us.id as user_id, us.login, us.avatar FROM messages ms
             JOIN users us ON sender = us.id
@@ -500,7 +747,17 @@ function get_correspondence ($con, $member_id, $user_id)
 
 }
 
-function get_members ($con, $user_id)
+/**
+ * Возвращает список участников переписки
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param int | string $user_id идентификатор текущего пользователя
+ *
+ * @return array
+ */
+
+
+function get_members($con, $user_id)
 {
     $sql = "
         SELECT sender as member_id, u.login, u.avatar
@@ -519,7 +776,17 @@ function get_members ($con, $user_id)
     return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 }
 
-function get_last_message ($con, $member_id, $user_id)
+/**
+ * Возвращает последнее сообщение, из переписки двух пользователей
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param int | string $member_id идентификатор оппонетнта попреписке
+ * @param int | string $user_id идентификатор текущего пользователя
+ *
+ * @return array
+ */
+
+function get_last_message($con, $member_id, $user_id)
 {
     $sql = "SELECT ms.id, ms.datetime, ms.content,
             (SELECT count(*) FROM messages
@@ -535,7 +802,16 @@ function get_last_message ($con, $member_id, $user_id)
     return $result ? mysqli_fetch_array($result, MYSQLI_ASSOC) : [];
 }
 
-function get_count_my_massages ($con, $user_id)
+/**
+ * Возвращает количество новых сообщений
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param int | string $user_id идентификатор текущего пользователя
+ *
+ * @return int
+ */
+
+function get_count_my_massages($con, $user_id)
 {
     $sql = "SELECT count(*) as count FROM messages WHERE recipient = ? AND is_new_message = 1";
     $stmt = db_get_prepare_stmt($con, $sql, [$user_id]);
@@ -544,7 +820,15 @@ function get_count_my_massages ($con, $user_id)
     return mysqli_fetch_array($result, MYSQLI_ASSOC)['count'];
 }
 
-function get_content_types ($con)
+/**
+ * Возвращает список типов контента
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ *
+ * @return array
+ */
+
+function get_content_types($con)
 {
     $sql = "SELECT `id`, `type_name`, `class_name` FROM `content_type`";
 
@@ -553,7 +837,16 @@ function get_content_types ($con)
     return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
 }
 
-function get_num_posts ($con, $user_id)
+/**
+ * Возвращает количество постов пользователя
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param int | string $user_id идентификатор текущего пользователя
+ *
+ * @return int
+ */
+
+function get_num_posts($con, $user_id)
 {
     $sql = "SELECT * FROM `posts` WHERE `user_id` = ?";
 
@@ -564,7 +857,16 @@ function get_num_posts ($con, $user_id)
     return mysqli_num_rows($result);
 }
 
-function get_num_subscribers ($con, $user_id)
+/**
+ * Возвращает количество подписчиков пользователя
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param int | string $user_id идентификатор текущего пользователя
+ *
+ * @return int
+ */
+
+function get_num_subscribers($con, $user_id)
 {
     $sql = "SELECT * FROM `subscribers` WHERE `subscription` = ?";
     $stmt = db_get_prepare_stmt($con, $sql, [$user_id]);
@@ -574,7 +876,17 @@ function get_num_subscribers ($con, $user_id)
     return mysqli_num_rows($result);
 }
 
-function get_num_reposts ($con, $post_id) {
+/**
+ * Возвращает количество репостов для поста
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $post_id идентификатор поста
+ *
+ * @return int
+ */
+
+function get_num_reposts($con, $post_id)
+{
     $sql = "SELECT * FROM posts WHERE original_post_id = ?";
     $stmt = db_get_prepare_stmt($con, $sql, [$post_id]);
     mysqli_stmt_execute($stmt);
@@ -582,24 +894,57 @@ function get_num_reposts ($con, $post_id) {
     return mysqli_num_rows($result);
 }
 
-function send_message ($con, $content, $sender, $recipient)
+/**
+ * Производит внутреннюю отправку сообщения
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string $content текст сообщения
+ * @param int | string $sender идентификатор отправителя
+ * @param int | string $recipient идентификатор получателя
+ *
+ * @return int
+ */
+
+function send_message($con, $content, $sender, $recipient)
 {
     $sql = "INSERT INTO messages (content, sender, recipient) VALUES (?, ?, ?);";
-    $stmt = db_get_prepare_stmt($con, $sql, [$content, $sender,  $recipient]);
+    $stmt = db_get_prepare_stmt($con, $sql, [$content, $sender, $recipient]);
     return mysqli_stmt_execute($stmt);
 }
 
-function set_is_new_message ($con, $user_id, $member_id) {
+/**
+ * Помечает сообщения, как прочитанные
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param int | string $user_id идентификатор текущего пользователя
+ * @param int | string $member_id идентификатор отправителя
+ *
+ * @return void
+ */
+
+function set_is_not_new_message($con, $user_id, $member_id)
+{
     $sql = "UPDATE messages SET is_new_message = 0
             WHERE (recipient = ? and sender = ?) AND is_new_message = 1";
-    $stmt = db_get_prepare_stmt($con, $sql, [$user_id,  $member_id]);
+    $stmt = db_get_prepare_stmt($con, $sql, [$user_id, $member_id]);
     mysqli_stmt_execute($stmt);
 }
 
-function set_subscriber ($con, $author, $subscriber, $isSubscribe)
+/**
+ * Устанавливает либо убирает подписку пользователя
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param int | string $author идентификатор текущего пользователя
+ * @param int | string $subscriber идентификатор пользователя на которого подписываемся
+ * @param bool $isSubscribe наличие подписки
+ *
+ * @return true | false
+ */
+
+function set_subscriber($con, $author, $subscriber, $isSubscribe)
 {
     if ($isSubscribe) {
-        $sql = "DELETE FROM subscribers WHERE author=? AND subscription=?";
+        $sql = "DELETE FROM subscribers WHERE author= ? AND subscription= ?";
     } else {
         $sql = "INSERT INTO subscribers (author, subscription) VALUES (?, ?)";
     }
@@ -609,7 +954,16 @@ function set_subscriber ($con, $author, $subscriber, $isSubscribe)
     return mysqli_stmt_execute($stmt);
 }
 
-function get_found_posts ($con, $search_request)
+/**
+ * Возвращает список постов соответствующих запросу
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string $search_request текст запроса
+ *
+ * @return array
+ */
+
+function get_found_posts($con, $search_request)
 {
     $sql = "
         SELECT p.id,
@@ -667,7 +1021,16 @@ function get_found_posts ($con, $search_request)
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-function get_all_fields_from_posts_by_id ($con, $post_id)
+/**
+ * Возвращает пост по идентификатору
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $post_id идентификатор поста
+ *
+ * @return array
+ */
+
+function get_all_fields_from_posts_by_id($con, $post_id)
 {
     $sql = "SELECT * FROM posts WHERE id = ?";
 
@@ -678,7 +1041,17 @@ function get_all_fields_from_posts_by_id ($con, $post_id)
     return mysqli_fetch_assoc($result);
 }
 
-function make_repost ($con, $user_id, $post)
+/**
+ * Создает репост поста по идентификатору
+ *
+ * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param array $post массив полей из таблицы posts
+ * @param string | int $post_id идентификатор поста
+ *
+ * @return true | false
+ */
+
+function make_repost($con, $user_id, $post)
 {
     $title = $post['title'];
     $content = $post['content'];

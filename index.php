@@ -6,13 +6,13 @@ if (isset($_SESSION['user_id'])) {
     exit();
 }
 
-include_once ('helpers.php');
-include_once ('functions.php');
+include_once('helpers.php');
+include_once('functions.php');
 include('sql-requests.php');
 
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD']=='POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $con = connect_to_database();
 
@@ -44,8 +44,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
 
             header('Location:' . 'feed.php');
             exit();
-        }
-        else {
+        } else {
             $errors['password'] = 'Неправильный пароль.';
         }
     }

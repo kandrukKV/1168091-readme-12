@@ -8,8 +8,8 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-include_once ('functions.php');
-include_once ('helpers.php');
+include_once('functions.php');
+include_once('helpers.php');
 include('sql-requests.php');
 
 $con = connect_to_database();
@@ -19,7 +19,7 @@ $is_show_form = true;
 
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD']=='POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (empty($_POST['comment'])) {
         $errors['comment'] = 'Это поле должно быть заполнено.';
@@ -47,8 +47,8 @@ for ($i = 0; $i < count($members); $i++) {
 
 $dateArray = [];
 
-foreach($members as $key=>$arr){
-    $dateArray[$key]=$arr['last_message_date'];
+foreach ($members as $key => $arr) {
+    $dateArray[$key] = $arr['last_message_date'];
 }
 
 array_multisort($dateArray, SORT_DESC, $members);
@@ -74,7 +74,7 @@ if ($list_id && count($messages) === 0 && $list_id != $user_id) {
     array_unshift($members, $member);
 }
 
-set_is_new_message($con, $user_id, $list_id);
+set_is_not_new_message($con, $user_id, $list_id);
 
 $content = include_template('messages.php', [
     'members' => $members,
