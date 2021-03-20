@@ -1,7 +1,7 @@
 <?php
 include_once('helpers.php');
 include_once('functions.php');
-include('sql-requests.php');
+include_once('sql-requests.php');
 
 session_start();
 

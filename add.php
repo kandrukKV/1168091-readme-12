@@ -8,9 +8,9 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-include_once('functions.php');
 include_once('helpers.php');
-include('sql-requests.php');
+include_once('functions.php');
+include_once('sql-requests.php');
 include_once('mail.php');
 
 $add_result = null;

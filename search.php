@@ -10,7 +10,7 @@ $user_id = $_SESSION['user_id'];
 
 include_once('helpers.php');
 include_once('functions.php');
-include('sql-requests.php');
+include_once('sql-requests.php');
 
 $con = connect_to_database();
 
