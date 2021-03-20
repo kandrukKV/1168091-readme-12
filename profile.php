@@ -68,7 +68,7 @@ $content = include_template('user-profile.php', [
     'active_tab' => $current_tab
 ]);
 
-print (include_template('layout.php', [
+print(include_template('layout.php', [
     'title' => 'readme: профиль',
     'content' => $content,
     'user_name' => $_SESSION['login'],

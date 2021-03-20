@@ -73,11 +73,10 @@ $content = include_template('post-details.php', [
     'user_num_of_subscribers' => get_num_subscribers($con, $post_details['user_id']),
 ]);
 
-print (include_template('layout.php', [
+print(include_template('layout.php', [
         'title' => 'readme: публикация',
         'content' => $content,
         'user_name' => $_SESSION['login'],
         'header_type' => 'post',
         'all_msg_count' => get_count_my_massages($con, $user_id)
-    ]
-));
+    ]));

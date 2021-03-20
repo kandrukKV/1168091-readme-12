@@ -13,7 +13,6 @@ include('sql-requests.php');
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     $con = connect_to_database();
 
     if (empty($_POST['email'])) {
@@ -32,12 +31,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (count($errors) === 0) {
-
         $user_data = get_user_by_email($con, $_POST['email']);
         $passwordHash = $user_data['pass'];
 
         if (password_verify($_POST['password'], $passwordHash)) {
-
             $_SESSION['user_id'] = $user_data['id'];
             $_SESSION['login'] = $user_data['login'];
             $_SESSION['avatar'] = $user_data['avatar'];
@@ -50,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-print (include_template('main.php', [
+print(include_template('main.php', [
     'errors' => $errors
 ]));
 

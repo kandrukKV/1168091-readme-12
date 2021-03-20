@@ -3,7 +3,7 @@
 /**
  * Обрезает текст
  *
- * @param string $text  текст
+ * @param string $text текст
  * @param int $text_limit максимальное количество символов
  *
  * @return string
@@ -79,7 +79,7 @@ function get_how_much_time($time)
 /**
  * Возврашает поле из массива $_POST
  *
- * @param string $name  название поля
+ * @param string $name название поля
  *
  * @return string | int | bool
  */
@@ -92,7 +92,7 @@ function get_post_val($name)
 /**
  * Возврашает массив хештегов и валидирует их
  *
- * @param string $str  строка с хештегами
+ * @param string $str строка с хештегами
  *
  * @return array | false
  */
@@ -112,7 +112,7 @@ function hash_tags_validation($str)
 /**
  * Возвращает html разметку поста в зависимости от его типа
  *
- * @param array $post  строка из таблицы posts
+ * @param array $post строка из таблицы posts
  *
  * @return string
  */

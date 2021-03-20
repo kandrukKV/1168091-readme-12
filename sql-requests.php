@@ -84,7 +84,7 @@ function db_get_prepare_stmt($link, $sql, $data = [])
 /**
  * Добавляет хештеги в базу данных для определенного поста
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param array $tags массив с хештегами
  * @param int | string $post_id идентификатор поста
  *
@@ -136,7 +136,7 @@ function add_tags($con, $tags, $post_id)
 /**
  * Добавляет новый пост в базу данных
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string $title заголовок поста
  * @param string $content содержимое поста
  * @param string | null $author автор поста
@@ -167,7 +167,7 @@ function add_post($con, $title, $content, $author, $content_type, $user_id)
 /**
  * Добавляет нового пользователя в базу данных
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string $email email пользователя
  * @param string $login логин пользователя
  * @param string $pass пароль пользователя
@@ -188,7 +188,7 @@ function add_user($con, $email, $login, $pass, $avatar)
 /**
  * Увеличивает счетчик просмотров поста на единицу
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string $post_id идентификатор поста
  *
  * @return true | false
@@ -205,7 +205,7 @@ function add_view($con, $post_id)
 /**
  * Добавляет новый комметарий базу данных
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string $content текст комменария
  * @param string | int $user_id идентификатор пользователя
  * @param string | int $post_id идентификатор поста
@@ -223,7 +223,7 @@ function add_comment($con, $content, $user_id, $post_id)
 /**
  * Добавляет лайк посту
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $user_id идентификатор пользователя
  * @param string | int $post_id идентификатор поста
  *
@@ -240,7 +240,7 @@ function add_like($con, $user_id, $post_id)
 /**
  * Проверяет наличие email в базе данных
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string $email текст комменария
  *
  * @return true | false
@@ -257,8 +257,8 @@ function checkEmail($con, $email)
 /**
  * Проверяет есть ли в базе данных запрашиваемый идентификатор типа контента
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
- * @param string | int $user_id идентификатор типа контента
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
+ * @param string | int $content_type_id идентификатор типа контента
  *
  * @return true | false
  */
@@ -277,7 +277,7 @@ function content_type_id_is_correct($con, $content_type_id)
 /**
  * Проверяет наличие лайка к посту от данного пользователя
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $user_id идентификатор пользователя
  * @param string | int $post_id идентификатор поста
  *
@@ -296,7 +296,7 @@ function is_like($con, $post_id, $user_id)
 /**
  * Проверяет наличие в базе данных поста с данным идентификатором
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $post_id идентификатор поста
  *
  * @return true | false
@@ -317,7 +317,7 @@ function is_there_post_with_id($con, $post_id)
 /**
  * Проверяет наличие полписки одного пользователя на другого
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $user_one идентификатор пользователя
  * @param string | int $user_two идентификатор пользователя
  *
@@ -336,7 +336,7 @@ function is_subscribe($con, $user_one, $user_two)
 /**
  * Возвращает инфрмацию о пользователе из базы данных по user_id
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $user_id идентификатор пользователя
  *
  * @return array
@@ -357,7 +357,7 @@ function get_user_info($con, $user_id)
 /**
  * Возвращает инфрмацию о пользователе из базы данных по email
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string $email email пользователя
  *
  * @return array
@@ -375,7 +375,7 @@ function get_user_by_email($con, $email)
 /**
  * Возвращает список постов пользователя
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $user_id идентификатор пользователя
  *
  * @return array
@@ -421,7 +421,7 @@ function get_posts_of_user($con, $user_id)
 /**
  * Возвращает пост из базы данных по его идентификатору
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $post_id идентификатор пользователя
  *
  * @return array
@@ -460,7 +460,7 @@ function get_post_by_id($con, $post_id)
 /**
  * Возвращает список хештегов к посту
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param object mysqli объект, представляющий подключение к серверу MySQL
  * @param string | int $post_id идентификатор пользователя
  *
  * @return array
@@ -479,7 +479,7 @@ function get_tags($con, $post_id)
 /**
  * Возвращает список комметариев к посту
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $post_id идентификатор пользователя
  *
  * @return array
@@ -509,7 +509,7 @@ function get_comments($con, $post_id)
 /**
  * Возвращает список постов, которые лайкнул пользователь
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $user_id идентификатор пользователя
  *
  * @return array
@@ -545,7 +545,7 @@ function get_likes_of_user($con, $user_id)
 /**
  * Возвращает подписки, которые сделал пользователь
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $user_id идентификатор пользователя
  *
  * @return array
@@ -575,7 +575,7 @@ function get_subscriptions($con, $user_id)
 /**
  * Возвращает подписчиков пользователя
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $user_id идентификатор пользователя
  *
  * @return array
@@ -593,7 +593,7 @@ function get_subscribers($con, $user_id)
 /**
  * Возвращает ленту пользователя
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $user_id идентификатор пользователя
  * @param string | int $current_content_type_id идентификатор типа поста
  *
@@ -648,7 +648,7 @@ function get_user_feed($con, $user_id, $current_content_type_id)
 /**
  * Возвращает количество постов определенного типа в базе данных
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $content_type_id тип поста пользователя
  *
  * @return int
@@ -677,7 +677,7 @@ function get_all_posts_count($con, $content_type_id)
 /**
  * Возвращает массив полулярных постов определенного типа
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $content_type_id тип поста пользователя
  * @param string $order_sort поле в БД по которому происходит сортировка
  * @param string $order_line направление сортировки down/up
@@ -725,7 +725,7 @@ function get_popular_posts($con, $content_type_id, $order_sort, $order_line, $li
 /**
  * Возвращает массив сообщений между пользователями
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param int | string $member_id идентификатор оппонетнта попреписке
  * @param int | string $user_id идентификатор текущего пользователя
  *
@@ -750,7 +750,7 @@ function get_correspondence($con, $member_id, $user_id)
 /**
  * Возвращает список участников переписки
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param int | string $user_id идентификатор текущего пользователя
  *
  * @return array
@@ -779,7 +779,7 @@ function get_members($con, $user_id)
 /**
  * Возвращает последнее сообщение, из переписки двух пользователей
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param int | string $member_id идентификатор оппонетнта попреписке
  * @param int | string $user_id идентификатор текущего пользователя
  *
@@ -805,7 +805,7 @@ function get_last_message($con, $member_id, $user_id)
 /**
  * Возвращает количество новых сообщений
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param int | string $user_id идентификатор текущего пользователя
  *
  * @return int
@@ -823,7 +823,7 @@ function get_count_my_massages($con, $user_id)
 /**
  * Возвращает список типов контента
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  *
  * @return array
  */
@@ -840,7 +840,7 @@ function get_content_types($con)
 /**
  * Возвращает количество постов пользователя
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param int | string $user_id идентификатор текущего пользователя
  *
  * @return int
@@ -860,7 +860,7 @@ function get_num_posts($con, $user_id)
 /**
  * Возвращает количество подписчиков пользователя
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param int | string $user_id идентификатор текущего пользователя
  *
  * @return int
@@ -879,7 +879,7 @@ function get_num_subscribers($con, $user_id)
 /**
  * Возвращает количество репостов для поста
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $post_id идентификатор поста
  *
  * @return int
@@ -897,7 +897,7 @@ function get_num_reposts($con, $post_id)
 /**
  * Производит внутреннюю отправку сообщения
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string $content текст сообщения
  * @param int | string $sender идентификатор отправителя
  * @param int | string $recipient идентификатор получателя
@@ -915,7 +915,7 @@ function send_message($con, $content, $sender, $recipient)
 /**
  * Помечает сообщения, как прочитанные
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param int | string $user_id идентификатор текущего пользователя
  * @param int | string $member_id идентификатор отправителя
  *
@@ -933,7 +933,7 @@ function set_is_not_new_message($con, $user_id, $member_id)
 /**
  * Устанавливает либо убирает подписку пользователя
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param int | string $author идентификатор текущего пользователя
  * @param int | string $subscriber идентификатор пользователя на которого подписываемся
  * @param bool $isSubscribe наличие подписки
@@ -957,7 +957,7 @@ function set_subscriber($con, $author, $subscriber, $isSubscribe)
 /**
  * Возвращает список постов соответствующих запросу
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string $search_request текст запроса
  *
  * @return array
@@ -1024,7 +1024,7 @@ function get_found_posts($con, $search_request)
 /**
  * Возвращает пост по идентификатору
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $post_id идентификатор поста
  *
  * @return array
@@ -1044,9 +1044,9 @@ function get_all_fields_from_posts_by_id($con, $post_id)
 /**
  * Создает репост поста по идентификатору
  *
- * @param object $con объект, представляющий подключение к серверу MySQL
- * @param array $post массив полей из таблицы posts
+ * @param mysqli $con объект, представляющий подключение к серверу MySQL
  * @param string | int $post_id идентификатор поста
+ * @param array $post массив полей из таблицы posts
  *
  * @return true | false
  */

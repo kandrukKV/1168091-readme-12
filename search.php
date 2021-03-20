@@ -17,7 +17,6 @@ $con = connect_to_database();
 $search_results = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['search_request'])) {
-
     $search_request = trim($_GET['search_request']);
 
     $search_results = get_found_posts($con, $search_request);
@@ -43,7 +42,7 @@ if (count($search_results) > 0) {
     $content = include_template('no-results.php');
 }
 
-print (include_template('layout.php', [
+print(include_template('layout.php', [
     'title' => 'readme: страница результатов поиска',
     'content' => $content,
     'user_name' => $_SESSION['login'],

@@ -38,7 +38,6 @@ $con = connect_to_database();
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     if (empty($_POST['email'])) {
         $errors['email'] = 'Email. Это поле не должно быть пустым.';
     } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
@@ -70,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (isset($_FILES['userpic-file']) && $_FILES['userpic-file']['error'] === 0) {
-
         $file_info = finfo_open(FILEINFO_MIME_TYPE);
         $file_name = $_FILES['userpic-file']['tmp_name'];
 
@@ -90,8 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $file_is_saved = move_uploaded_file($_FILES['userpic-file']['tmp_name'], $file_path . $file_name);
         }
 
-        $add_user = add_user($con, $_POST['email'], $_POST['login'], $_POST['password'],
-            $file_is_saved ? $file_name : null);
+        $add_user = add_user($con, $_POST['email'], $_POST['login'], $_POST['password'], $file_is_saved ? $file_name : null);
 
         if ($add_user) {
             $last_index = mysqli_insert_id($con);
@@ -114,7 +111,7 @@ $content = include_template('registration.php', [
     'errors' => $errors
 ]);
 
-print (include_template('layout.php', [
+print(include_template('layout.php', [
     'title' => 'readme: регистрация',
     'content' => $content,
     'header_type' => 'registration',

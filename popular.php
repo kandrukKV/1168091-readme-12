@@ -80,11 +80,10 @@ $content = include_template('popular.php', [
     'limit' => $limit
 ]);
 
-print (include_template('layout.php', [
+print(include_template('layout.php', [
         'title' => 'readme: популярное',
         'content' => $content,
         'user_name' => $_SESSION['login'],
         'header_type' => 'popular',
         'all_msg_count' => get_count_my_massages($con, $user_id)
-    ]
-));
+    ]));

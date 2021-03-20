@@ -36,7 +36,7 @@ $content = include_template('feed.php', [
     'current_content_type_id' => $current_content_type_id
 ]);
 
-print (include_template('layout.php', [
+print(include_template('layout.php', [
     'title' => 'readme: моя лента',
     'content' => $content,
     'user_name' => $_SESSION['login'],

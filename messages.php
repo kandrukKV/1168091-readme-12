@@ -20,7 +20,6 @@ $is_show_form = true;
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     if (empty($_POST['comment'])) {
         $errors['comment'] = 'Это поле должно быть заполнено.';
     }
@@ -56,7 +55,6 @@ array_multisort($dateArray, SORT_DESC, $members);
 $messages = $list_id ? get_correspondence($con, $user_id, $list_id) : [];
 
 if ($list_id && count($messages) === 0 && $list_id != $user_id) {
-
     $recipient = get_user_info($con, $list_id);
 
     if (!$recipient) {
@@ -84,11 +82,10 @@ $content = include_template('messages.php', [
     'is_show_form' => $is_show_form
 ]);
 
-print (include_template('layout.php', [
+print(include_template('layout.php', [
         'title' => 'readme: популярное',
         'content' => $content,
         'user_name' => $_SESSION['login'],
         'header_type' => 'messages',
         'all_msg_count' => get_count_my_massages($con, $user_id)
-    ]
-));
+    ]));

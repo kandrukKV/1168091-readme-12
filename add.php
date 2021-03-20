@@ -40,7 +40,6 @@ if (!$is_correct_current_tab) {
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     if (empty($_POST['title'])) {
         $errors['title'] = 'Заголовок. Это поле должно быть заполнено.';
     }
@@ -64,6 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
+    $file_name = '';
+
     switch ($current_tab) {
         case 'photo':
 
@@ -72,7 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             if (isset($_FILES['photo-file']) && $_FILES['photo-file']['error'] === 0) {
-
                 $file_info = finfo_open(FILEINFO_MIME_TYPE);
                 $file_name = $_FILES['photo-file']['tmp_name'];
 
@@ -99,7 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (count($errors) === 0) {
-
         if ($current_tab === 'photo') {
             $file_path = __DIR__ . '/uploads/';
             $file_is_saved = false;
@@ -107,10 +106,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($_FILES['photo-file']['error'] === 0) {
                 $file_name = uniqid() . $_FILES['photo-file']['name'];
                 $file_is_saved = move_uploaded_file($_FILES['photo-file']['tmp_name'], $file_path . $file_name);
-
             } elseif (!empty($_POST['content'])) {
                 $img = file_get_contents($_POST['content']);
-                $file_name = uniqid();
                 if ($img) {
                     $file_info = finfo_open(FILEINFO_MIME_TYPE);
                     $mime_type = finfo_buffer($file_info, $img);
@@ -145,8 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $errors['content'] = 'Ошибка записи файла';
             }
         } else {
-            $add_result = add_post($con, $_POST['title'], $_POST['content'], $_POST['author'] ?? null, $current_tab,
-                $_SESSION['user_id']);
+            $add_result = add_post($con, $_POST['title'], $_POST['content'], $_POST['author'] ?? null, $current_tab, $_SESSION['user_id']);
         }
 
 
@@ -173,13 +169,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $subject = 'Новая публикация от пользователя ' . $_SESSION['login'];
 
-                $message = (new Swift_Message($subject))
-                    ->setFrom(['7d559571f8-35eba0@inbox.mailtrap.io' => 'readme: оповещение'])
-                    ->setTo($target_email)
-                    ->setBody($body);
+                $message = (new Swift_Message($subject));
+                $message ->setFrom(['7d559571f8-35eba0@inbox.mailtrap.io' => 'readme: оповещение']);
+                $message->setTo($target_email)->setBody($body);
 
                 $mailer->send($message);
-
             }
 
             header('Location:' . 'post.php?id=' . $last_index);
@@ -194,12 +188,10 @@ $content = include_template('add-post.php', [
     'errors' => $errors
 ]);
 
-print (include_template('layout.php', [
-        'title' => 'readme: добавление публикации',
-        'content' => $content,
-        'user_name' => $_SESSION['login'],
-        'user_id' => $_SESSION['user_id'],
-        'header_type' => 'add_post',
-        'all_msg_count' => get_count_my_massages($con, $user_id)
-    ]
-));
+print(include_template('layout.php', [
+    'title' => 'readme: добавление публикации',
+    'content' => $content,
+    'user_name' => $_SESSION['login'],
+    'user_id' => $_SESSION['user_id'],
+    'header_type' => 'add_post',
+    'all_msg_count' => get_count_my_massages($con, $user_id)]));
